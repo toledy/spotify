@@ -1,5 +1,5 @@
 ---
-title: Concatenate the two dataframes
+title: Data Mining & Wrangling
 notebook: data_mining_and_wrangling.ipynb
 nav_include: 3
 ---

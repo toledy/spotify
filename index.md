@@ -1,5 +1,5 @@
 ---
-title: The Case of the Italian Olives
+title: Spotify Playlist Data Analysis
 ---
 
 This is the home page

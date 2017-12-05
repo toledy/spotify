@@ -16,11 +16,20 @@ The overarching goal of this project is to understand how these algorithms can b
 
 Spotify’s business model is, to a significant extent, centered around providing its users with relevant songs based on user inputs and historical preferences. Being able to recommend appropriate playlists to its users is hence of vital importance. With this motivation in mind, the two problem statements are:
 
-**What predictors and what model can be used to determine the success of a Spotify playlist (i.e., number of followers) more accurately out-of-sample than a simple baseline model and how well do these predictors match with expectations gained from exploratory data analysis?**
+**1. What predictors and what model can be used to determine the success of a Spotify playlist (i.e., number of followers) more accurately out-of-sample than a simple baseline model and how well do these predictors match with expectations gained from exploratory data analysis?**
 
-**Using this improved model, generate playlists according to user-specified filters such that the resultant playlists are deemed to have a high probability of being successful.**
+**2. Using this improved model, generate playlists according to user-specified filters such that the resultant playlists are deemed to have a high probability of being successful.**
 
 ## Introduction and Description of Data
+
+**High-level Data Statistics**
+
+| Metric            | Statistic  |
+|:—————————————————:|:----------:|
+| Unique Playlists  | 1,420      |
+| Unique Tracks     | 72,789     |
+| Unique Artists    | 28,915     |
+| Unique Predictors | >3,000     |
 
 Please refer to [Data Wrangling](https://toledy.github.io/spotify/data_mining_and_wrangling.html) for more information on the data mining and wrangling procedures employed.
 

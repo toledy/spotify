@@ -1,7 +1,7 @@
 ---
 title: Ensemble Models
 notebook: ensemble_methods.ipynb
-nav_include: 3
+nav_include: 4
 ---
 
 ## Contents

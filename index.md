@@ -37,11 +37,14 @@ Please refer to [EDA](https://toledy.github.io/spotify/olives-eda.html) for more
 
 ## Modeling Approach and Project Trajectory
 
+Please refer to [Baseline Models](https://toledy.github.io/spotify/baseline_models.html) for more information on the baseline models employed.
+
+Please refer to [Ensemble Models](https://toledy.github.io/spotify/ensemble_methods.html) for more information on the advanced models employed.
 
 
 ## Results, Conclusions, and Future Work
 
-
+To come
 
 ## Literature Review / Related Work / Sources
 

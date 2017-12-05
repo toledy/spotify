@@ -25,7 +25,7 @@ Spotify’s business model is, to a significant extent, centered around providin
 **High-level Data Statistics**
 
 | Metric            | Statistic  |
-|:—————————————————:|:----------:|
+|:-----------------:|:----------:|
 | Unique Playlists  | 1,420      |
 | Unique Tracks     | 72,789     |
 | Unique Artists    | 28,915     |

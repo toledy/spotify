@@ -2,9 +2,7 @@
 title: Spotify Playlist Data Analysis
 ---
 
-Data Science I
-Harvard University
-Fall 2017
+Data Science I | Harvard University | Fall 2017
 
 
 ## Introduction
@@ -20,12 +18,25 @@ The overarching goal of this project is to understand how these algorithms can b
 ## Introduction and Description of Data
 
 
-## Literature Review/Related Work
-
-[Spotify Developer API](https://developer.spotify.com)
-[Spotipy Python Library](https://github.com/plamere/spotipy)
 
 ## Modeling Approach and Project Trajectory
 
 
+
 ## Results, Conclusions, and Future Work
+
+
+
+## Literature Review / Related Work / Sources
+
+We would be remiss not to mention both the Spotify API:
+
+[Spotify Developer API](https://developer.spotify.com)
+
+As well as the useful Python API extension:
+
+[Spotipy Python Library](https://github.com/plamere/spotipy)
+
+Finally, of course:
+
+[Harvard Data Science I](https://cs109.github.io/a-2017/)

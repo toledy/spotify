@@ -14,9 +14,11 @@ The overarching goal of this project is to understand how these algorithms can b
 
 ## Problem Statement and Motivation
 
-What predictors can be used to determine the success of a Spotify playlist (i.e., number of followers) more accurately out-of-sample than a simple baseline model and how well do these predictors match with expectations gained from exploratory data analysis?
+Spotify’s business model is, to a significant extent, centered around providing its users with relevant songs based on user inputs and historical preferences. Being able to recommend appropriate playlists to its users is hence of vital importance. With this motivation in mind, the two problem statements are:
 
-Using this improved model, generate playlists according to user-specified filters such that the resultant playlists are deemed to have a high probability of being successful.
+** What predictors and what model can be used to determine the success of a Spotify playlist (i.e., number of followers) more accurately out-of-sample than a simple baseline model and how well do these predictors match with expectations gained from exploratory data analysis? **
+
+** Using this improved model, generate playlists according to user-specified filters such that the resultant playlists are deemed to have a high probability of being successful. **
 
 ## Introduction and Description of Data
 

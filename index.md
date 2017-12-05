@@ -22,7 +22,9 @@ Spotify’s business model is, to a significant extent, centered around providin
 
 ## Introduction and Description of Data
 
+Please refer to [Data Wrangling](https://toledy.github.io/spotify/data_mining_and_wrangling.html) for more information on the data mining and wrangling procedures employed.
 
+Please refer to [EDA](https://toledy.github.io/spotify/olives-eda.html) for more in-depth insights into the exploratory data analysis.
 
 ## Modeling Approach and Project Trajectory
 

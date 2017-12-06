@@ -9,7 +9,8 @@ nav_include: 4
 *  
 {: toc}
 
-## Strategy of Fitting Ensemble Models
+
+## Strategy of Fitting Ensemble Models:
 
 1) **Data Pre-Processing**: after reading the dataframe, we first split the training/test data by (90%-10% split) due to the small size of the dataset, then standardize the numerical columns before fitting the models, and finally checking for any missing data and impute accordingly. 
 
@@ -38,6 +39,16 @@ nav_include: 4
 
 
 
+
+
+
+
+
+
+
+
+
+
 ## Section 1. Data Pre-Processing
 
 After reading in the dataframe, we will pre-process the data in four steps: 
@@ -50,48 +61,20 @@ After reading in the dataframe, we will pre-process the data in four steps:
 
 
 
-```python
-# A train/test split is constructed where 90% of the subsample is 
-# the train data set and 10% the test data set.
-
-# Set train and test sizes
-train_size = 0.9
-test_size = 1-train_size
-
-# Function to return random train and test sets
-def data_splitter(df, train, validate=False, seed=9001):
-    
-    if validate:
-        np.random.seed(seed)
-        perm = np.random.permutation(df.index)
-        m = len(df)
-        train_end = int(train * m)
-        validate_end = int(validate * m) + train_end
-        train = df.ix[perm[:train_end]]
-        validate = df.ix[perm[train_end:validate_end]]
-        test = df.ix[perm[validate_end:]]
-        return train, validate, test
-    else:
-        np.random.seed(seed)
-        perm = np.random.permutation(df.index)
-        m = len(df)
-        train_end = int(train * m)
-        train = df.ix[perm[:train_end]]
-        test = df.ix[perm[train_end:]]
-        return train, test
-```
 
 
 
 
-```python
-# Create train and test dataframes from subsample
-train_df, test_df = data_splitter(data, train_size)
 
-# Return shapes of train and test dataframes
-print("Train Size: {}".format(train_df.shape))
-print("Test Size: {}".format(test_df.shape))
-```
+
+
+
+
+
+
+
+
+
 
 
     Train Size: (1278, 949)
@@ -150,21 +133,6 @@ print("Test Size: {}".format(test_df.shape))
 
 
 
-```python
-# Median imputation of missing values
-imp = Imputer(missing_values='NaN', strategy='median', axis=1)
-train_df = pd.DataFrame(imp.fit_transform(train_df), columns=data.columns)
-test_df = pd.DataFrame(imp.transform(test_df), columns=data.columns)
-```
-
-
-
-
-```python
-# Split training and test data
-train_df = train_df[train_df['Followers'] != 0]
-test_df = test_df[test_df['Followers'] != 0]
-```
 
 
 
@@ -173,31 +141,14 @@ test_df = test_df[test_df['Followers'] != 0]
 
 
 
-```python
-# List all numerical columns to be used for classification
-numerical_columns = ['acousticness_mean','acousticness_std','dance_mean','dance_std',\
-                    'energy_mean','energy_std','instrumentalness_mean','instrumentalness_std',\
-                    'key_mean','key_std','liveness_mean','liveness_std','loudness_mean',\
-                    'loudness_std','mode_mean','mode_std','speech_mean','speech_std',\
-                    'tempo_mean','tempo_std','valence_mean','valence_std','followers_mean',\
-                    'followers_std','popularity_mean','popularity_std',\
-                    'house_acousticness_mean', 'hip hop_acousticness_std','pop_liveness_std', \
-                     'dance_liveness_std', 'r&b_acousticness_std','rap_energy_std', 'rap_key_std',\
-                     'acoustic_acousticness_std','acoustic_acousticness_mean', 'acoustic_energy_std',\
-                     'acoustic_key_std']
-```
 
 
 
 
-```python
-# The numerical columns are standardized next
-mean = train_df[numerical_columns].mean()
-std = train_df[numerical_columns].std()
 
-train_df[numerical_columns] = (train_df[numerical_columns] - mean)/std
-test_df[numerical_columns] = (test_df[numerical_columns] - mean)/std
-```
+
+
+
 
 
 
@@ -213,26 +164,32 @@ test_df[numerical_columns] = (test_df[numerical_columns] - mean)/std
 Here, we choose 6 metrics to evaluate our models: 
 
 1) **$R^2$ - R Squared** = measures how well future datasets are likely to be predicted by the model. The score ranges from negative (because the model can be arbitrarily worse) to a best possible value of 1.0. Usually, the bigger the $R^2$, the better the model. Yet we do acknowledge the tedency of over-fitting with $R^2$ as with more predictors, it will only remain constant or increase.
+
 $$R^2(y, \hat{y}) = 1 - \frac{\sum_{i=0}^{n-1}(y_i-\hat{y}_i)^2)}{\sum_{i=0}^{n-1}(y_i-\bar{y})^2}, n = \text{sample size}$$
 
 
-2) **$EVar$ - Explained Variance Score** = measures how good the model explains the variance in the response variable. The score ranges from a minimum of 0 to a maximum of 1.0. Similar to $R^2$, the higher the score, the better the model. 
+2) **$EVar$ - Explained Variance Score** = measures how good the model explains the variance in the response variable. The score ranges from a minimum of 0 to a maximum of 1.0. Similar to $R^2$, the higher the score, the better the model.
+
 $$EVar(y, \hat{y}) = 1 - \frac{\text{Var}(y - \hat{y})}{\text{Var}(y)}$$
 
 
 3) **$MAE$ - Mean Absolute Error** = computes the expected value of the absolute error or the $l1$ loss function. For all the error functions, the smaller the error, the better the model.
+
 $$MAE(y, \hat{y}) = \frac{1}{n} \sum_{i=0}^{n-1} |y_i-\hat{y}_i| $$
 
 
 4) **$MSE$ - Mean Squared Error** = computes the expected value of the squared error
+
 $$MSE(y, \hat{y}) = \frac{1}{n} \sum_{i=0}^{n-1} (y_i-\hat{y}_i)^2 $$
 
 
 5) **$MSLE$ - Mean Squared Log Error** = computes the expected value of the squared logarithmic error. This would probably be the most appropriate metric to evalute our models as we log-transformed our response variable - number of followers for the playlist. 
+
 $$MSLE(y, \hat{y}) = \frac{1}{n} \sum_{i=0}^{n-1} [\ln(1+y_i)-\ln(1+\hat{y}_i)]^2$$
 
 
 6) **$MEAE$ - Median Absolute Error** = computes the loss function by using the median of all absolute differences between the actual values and the predicted values. This metric is robust to outliers. 
+
 $$MEAE(y, \hat{y}) = \text{median}(|y_1-\hat{y}_1|, \cdots, |y_n-\hat{y}_n|)$$
 
 The key metrics given the parameters of our pre-processing are 1) $R^2$ and 5) $MSLE$, which will be the most important basis of comparison for the 9 ensemble models.
@@ -1440,40 +1397,8 @@ clf_test
 
 
 
-```python
-def plot_learning_curve(estimator, title, X, y, cv=None, train_sizes=np.linspace(.1, 1, 5)):
-
-    plt.figure(figsize=(20, 5))
-    plt.title(title)
-    plt.xlabel("Training Samples")
-    plt.ylabel("Error")
-    
-    train_sizes, train_scores, test_scores = learning_curve(
-        estimator, X, y, cv=cv, n_jobs=-1, train_sizes=train_sizes)
-    
-    train_scores_mean = 1-np.mean(train_scores, axis=1)
-    train_scores_std = np.std(train_scores, axis=1)
-    test_scores_mean = 1-np.mean(test_scores, axis=1)
-    test_scores_std = np.std(test_scores, axis=1)
-
-    plt.fill_between(train_sizes, train_scores_mean - train_scores_std,
-                     train_scores_mean + train_scores_std, alpha=0.1, color="r")
-    plt.fill_between(train_sizes, test_scores_mean - test_scores_std,
-                     test_scores_mean + test_scores_std, alpha=0.1, color="g")
-    
-    plt.plot(train_sizes, train_scores_mean, 'o-', color="r", label="Training Error")
-    plt.plot(train_sizes, test_scores_mean, 'o-', color="g", label="Cross-Validation Error")
-
-    plt.legend(loc="best")
-    
-    return plt.show()
-```
 
 
 
 
-```python
-# Plot results and format using Matplotlib
-plot_learning_curve(clf, "Gradient Boosting Regressor Learning Curve", x_train, y_train, cv=5)
-```
 

@@ -1,7 +1,7 @@
 ---
-title: EDA
-notebook: eda.ipynb
-nav_include: 2
+title: Playlist Generation & Conclusion
+notebook: generate_playlist.ipynb
+nav_include: 5
 ---
 
 ## Contents

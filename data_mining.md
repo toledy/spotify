@@ -1,6 +1,6 @@
 ---
 title: Data Mining & Wrangling
-notebook: data_mining_and_wrangling.ipynb
+notebook: data_mining.ipynb
 nav_include: 1
 ---
 
@@ -8,10 +8,6 @@ nav_include: 1
 {:.no_toc}
 *  
 {: toc}
-
-### Using The Spotify Developer API
-
-
 
 
 
@@ -24,11 +20,14 @@ To begin pulling playlist data from the Spotify API, first a connection with the
 
 
 ```python
+# ID and Password for accessing Spotify API
 client_id = "client_id"
 client_secret = "client_secret_id"
 
+# Setup the credentials
 client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
 
+# Make the connection
 sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 ```
 
@@ -44,10 +43,13 @@ The initial step was to pull Spotify's featured playlists and obtain a number of
 
 
 ```python
+# Get all spotify playlists
 playlists = sp.user_playlists('spotify')
 
+# Empty list to hold playlist information
 spotify_playlists = []
 
+# Loop to get data for each playlist
 while playlists:
     
     for i, playlist in enumerate(playlists['items']):
@@ -68,11 +70,76 @@ while playlists:
 ```
 
 
+
+    ---------------------------------------------------------------------------
+
+    SpotifyOauthError                         Traceback (most recent call last)
+
+    <ipython-input-4-435cbbc58e0d> in <module>()
+          1 # Get all spotify playlists
+    ----> 2 playlists = sp.user_playlists('spotify')
+          3 
+          4 # Empty list to hold playlist information
+          5 spotify_playlists = []
+
+
+    /Users/liutianhan/anaconda/lib/python3.6/site-packages/spotipy/client.py in user_playlists(self, user, limit, offset)
+        364         '''
+        365         return self._get("users/%s/playlists" % user, limit=limit,
+    --> 366                          offset=offset)
+        367 
+        368     def user_playlist(self, user, playlist_id=None, fields=None):
+
+
+    /Users/liutianhan/anaconda/lib/python3.6/site-packages/spotipy/client.py in _get(self, url, args, payload, **kwargs)
+        144         while retries > 0:
+        145             try:
+    --> 146                 return self._internal_call('GET', url, payload, kwargs)
+        147             except SpotifyException as e:
+        148                 retries -= 1
+
+
+    /Users/liutianhan/anaconda/lib/python3.6/site-packages/spotipy/client.py in _internal_call(self, method, url, payload, params)
+         98         if not url.startswith('http'):
+         99             url = self.prefix + url
+    --> 100         headers = self._auth_headers()
+        101         headers['Content-Type'] = 'application/json'
+        102 
+
+
+    /Users/liutianhan/anaconda/lib/python3.6/site-packages/spotipy/client.py in _auth_headers(self)
+         88             return {'Authorization': 'Bearer {0}'.format(self._auth)}
+         89         elif self.client_credentials_manager:
+    ---> 90             token = self.client_credentials_manager.get_access_token()
+         91             return {'Authorization': 'Bearer {0}'.format(token)}
+         92         else:
+
+
+    /Users/liutianhan/anaconda/lib/python3.6/site-packages/spotipy/oauth2.py in get_access_token(self)
+         55             return self.token_info['access_token']
+         56 
+    ---> 57         token_info = self._request_access_token()
+         58         token_info = self._add_custom_values_to_token_info(token_info)
+         59         self.token_info = token_info
+
+
+    /Users/liutianhan/anaconda/lib/python3.6/site-packages/spotipy/oauth2.py in _request_access_token(self)
+         74             headers=headers, verify=True, proxies=self.proxies)
+         75         if response.status_code is not 200:
+    ---> 76             raise SpotifyOauthError(response.reason)
+         77         token_info = response.json()
+         78         return token_info
+
+
+    SpotifyOauthError: Bad Request
+
+
 The obtained baseline playlist features were converted into a large dataframe next.
 
 
 
 ```python
+# Convert list into a dataframe
 data = pd.DataFrame(np.array(spotify_playlists).reshape(len(spotify_playlists),6), 
                     columns=['Name', 'No. of Tracks', 'ID', 'URI', 'HREF', 'Public'])
 data.head()
@@ -165,8 +232,10 @@ For each playlist, the number of followers was obtained - this number will be th
 
 
 ```python
+# Pull the number of followers per playlist
 playlist_follower = []
 
+# Loop over playlists and get followers
 for i in range(0, len(data['URI'])-1): 
     
     # If number of followers is greater than 0
@@ -190,6 +259,7 @@ Finally - the number of followers was concatenated to the playlist dataframe.
 
 
 ```python
+# Add a new column for followers 
 data['Followers'] = pd.DataFrame({'Followers': playlist_follower})
 data.head()
 ```
@@ -293,6 +363,7 @@ To this extent, we defined a function to pull all playlists' tracks.
 
 
 ```python
+# New function to get tracks in playlist
 def get_playlist_tracks(username, playlist_id):
     results = sp.user_playlist_tracks(username, playlist_id)
     tracks = results['items']
@@ -308,8 +379,10 @@ Running the feature extraction from Spotify could take a significant amount of t
 
 
 ```python
+# Subsample of data to pull
 Spotify_playlists = data.iloc[0:10]
 
+# Create playlist cache in memory
 playlist_tracks = dict()
 ```
 
@@ -319,6 +392,7 @@ The playlists were prepped for audio feature extraction.
 
 
 ```python
+# Collect audio features per track per playlist
 for playlist in Spotify_playlists["ID"]:
     if Spotify_playlists.loc[Spotify_playlists['ID'] == playlist, 'No. of Tracks'].item() > 0:
         try:
@@ -332,6 +406,7 @@ for playlist in Spotify_playlists["ID"]:
 
 
 ```python
+# Define an example list of songs for the first 10 playlists
 songs_playlist = []
 
 for item,playlist in enumerate(playlist_tracks):
@@ -351,6 +426,7 @@ Again, a dictionary in cache memory was setup for the main audio feature extract
 
 
 ```python
+# Create audio feature dictionary and set sleeping time thresholds
 songs = [item[1] for item in songs_playlist]
 
 audio_feat = dict()
@@ -364,6 +440,7 @@ Audio features were extracted using the below code - note running this code on a
 
 
 ```python
+# Audio feature extraction - saves information in cache
 for item,song in enumerate(songs):
     if song not in audio_feat:
         try:
@@ -392,6 +469,7 @@ Once all the audio features were extracted, they were converted into the main au
 
 
 ```python
+# Convert raw data into dictionaries
 acousticness = dict()
 danceability = dict()
 duration_ms = dict()
@@ -429,6 +507,7 @@ for item,song in enumerate(audio_feat):
 
 
 ```python
+# Creation of audio feature dataframes from dictionaries
 acc_df = pd.DataFrame(pd.Series(acousticness)).reset_index().rename(columns={'index': 'song', 0: 'acousticness'})
 dan_df = pd.DataFrame(pd.Series(danceability)).reset_index().rename(columns={'index': 'song', 0: 'dance'})
 dur_df = pd.DataFrame(pd.Series(duration_ms)).reset_index().rename(columns={'index': 'song', 0: 'duration'})
@@ -448,6 +527,7 @@ vale_df = pd.DataFrame(pd.Series(valence)).reset_index().rename(columns={'index'
 
 
 ```python
+# Merge individual dataframes into one features dataframe
 playlist_df = pd.DataFrame(songs_playlist,columns=['playlist','song'])
 
 frame_V1 = [acc_df,dan_df,dur_df,ene_df,inst_df,key_df,live_df,loud_df,mode_df,spee_df,temp_df,time_df,vale_df]
@@ -598,6 +678,7 @@ features_df.head()
 
 
 ```python
+# Save as csv file
 features_df.to_csv('track_features(track_indices).csv', sep=',')
 ```
 
@@ -611,8 +692,10 @@ First, a function was defined to retrieve artist information given an artist nam
 
 
 ```python
+# Subsample of data to pull
 Spotify_playlists = data.iloc[0:10]
 
+# Collect artist information per track found in Step II
 playlist_tracks = dict()
 ```
 
@@ -620,6 +703,7 @@ playlist_tracks = dict()
 
 
 ```python
+# New function to get artists in playlist
 def get_artist(name):
     results = sp.search(q='artist:' + name, type='artist')
     items = results['artists']['items']
@@ -635,6 +719,7 @@ The playlists were prepped for audio feature extraction.
 
 
 ```python
+# Collect tracks per playlist
 for playlist in Spotify_playlists["ID"]:
     if Spotify_playlists.loc[Spotify_playlists['ID'] == playlist, 'No. of Tracks'].item() > 0:
         try:
@@ -648,6 +733,7 @@ for playlist in Spotify_playlists["ID"]:
 
 
 ```python
+# Define an example list of songs for the first 10 playlists
 artist_list = []
 song_dict = dict()
 playlist_dict = dict()
@@ -670,6 +756,7 @@ Again, a dictionary in cache memory was setup for the main artist feature extrac
 
 
 ```python
+# Create artist feature dictionary and set sleeping time thresholds
 artists = list(set([item[2] for item in artist_list]))
 
 artist_info = dict()
@@ -683,6 +770,7 @@ Artist features were extracted using the below code - note running this code on 
 
 
 ```python
+# Artist feature extraction - saves information in cache
 for item,artist in enumerate(artists):
     if artist not in artist_info:
         try:
@@ -711,6 +799,7 @@ Once all the artist features were extracted, they were converted into the main a
 
 
 ```python
+# Convert raw data into dictionaries
 followers = dict()
 genres = dict()
 popularity = dict()
@@ -728,6 +817,7 @@ for item,artist in enumerate(artist_info):
 
 
 ```python
+# Creation of artist feature dataframes from dictionaries
 follow_df = pd.DataFrame(pd.Series(followers)).reset_index().rename(columns={'index': 'artist', 0: 'followers'})
 genres_df = pd.DataFrame(pd.Series(genres)).reset_index().rename(columns={'index': 'artist', 0: 'genres'})
 popularity_df = pd.DataFrame(pd.Series(popularity)).reset_index().rename(columns={'index': 'artist', 0: 'popularity'})
@@ -739,6 +829,7 @@ playlist_df = pd.DataFrame(pd.Series(playlist_dict)).reset_index().rename(column
 
 
 ```python
+# Merge individual dataframes into one features dataframe
 frame_V1 = [follow_df,genres_df,popularity_df,song_df, playlist_df]
 artist_information = pd.concat(frame_V1,axis=1).T.groupby(level=0).first().T
 artist_information.head()
@@ -829,6 +920,7 @@ artist_information.head()
 
 
 ```python
+# Save as csv file
 artist_information.to_csv('artists(track_indices).csv', sep=',')
 ```
 
@@ -844,6 +936,7 @@ The first step was to load all the dataframes separately.
 
 
 ```python
+# Load playlist dataframe
 playlist_df = pd.read_csv('Playlist.csv')
 playlist_df.head()
 ```
@@ -945,6 +1038,7 @@ playlist_df.head()
 
 
 ```python
+# Load track features dataframe
 tracks_df = pd.read_csv('tracks_df_sub.csv').drop(['Unnamed: 0','Unnamed: 0.1'],axis=1)
 tracks_df.head()
 ```
@@ -1088,6 +1182,7 @@ tracks_df.head()
 
 
 ```python
+# Load artist information dataframe
 artist_df_sub = pd.read_csv('artist_df_sub.csv').drop(['Unnamed: 0','Unnamed: 0.1'],axis=1)
 artist_df_sub.head()
 ```
@@ -1179,6 +1274,7 @@ As should be obvious from the above - artists were grouped in a list of genres b
 
 
 ```python
+# One-hot encode genre labels
 mlb = MultiLabelBinarizer(sparse_output=True)
 pre_data = mlb.fit_transform(artist_df_sub['genres'].str.split(','))
 classes = [i.strip('[]') for i in mlb.classes_]
@@ -1186,8 +1282,10 @@ genre_sub = pd.DataFrame(pre_data.toarray(),columns=classes)
 _, i = np.unique(genre_sub.columns, return_index=True)
 genre_sub = genre_sub.iloc[:, i]
 
+# Drop genre column from artist sub dataframe
 artist_df_sub_mid = artist_df_sub.drop('genres', axis=1)
 
+# Concatenate artist sub dataframe and genre dataframe
 artist_sub_frames = [artist_df_sub_mid,genre_sub]
 artist_df = pd.concat(artist_sub_frames,axis=1,join='inner')
 ```
@@ -1198,9 +1296,11 @@ Once all the genres were one-hot encoded, the dataframes were grouped by playlis
 
 
 ```python
+# Group-by function on artists
 group_artists_by_playlist = artist_df.groupby('playlist') 
 print("Number of playlists: ", len(group_artists_by_playlist))
 
+# Group-by function on tracks
 group_tracks_by_playlist = tracks_df.groupby('playlist')
 print("Number of playlists: ", len(group_tracks_by_playlist))
 ```
@@ -1214,6 +1314,7 @@ print("Number of playlists: ", len(group_tracks_by_playlist))
 
 In terms of artists, feature engineering led to the following predictors:
 
+* Thirty columns are the names of top 30 artists (in terms of appearing most often in popular playlists) They are categorical variablce indicating whether a playlist has a specific artist.
 * Five columns representing the number of times top 50 artists (in terms of artist followers) appeared in the playlists (bucketed in 10 artists each)
 * Two columns representing the mean and standard deviation of artists followers per playlist
 * Two columns representing the mean and standard deviation of artists popularity per playlist
@@ -1238,14 +1339,39 @@ artist_df['top_40_50'] = np.where(artist_df['artist'].isin(top_40_50_followers),
 ```
 
 
+Second, this the list of 30 artists that appear most often in playlists with 35,000+ followers. 
+
+
+
+```python
+popular_artists=['Post Malone', 'JAY Z', 'Lil Wayne', 'Rihanna', '21 Savage',
+       'Young Thug', 'A$AP Rocky', 'Galantis', 'Van Morrison',
+       'Chance The Rapper', 'Led Zeppelin', 'Otis Redding',
+       'Axwell /\\ Ingrosso', 'Wiz Khalifa', 'Yo Gotti', 'Ryan Adams',
+       'Miguel', 'Birdy', 'John Mayer', 'Kanye West', 'First Aid Kit',
+       'Deorro', 'Ellie Goulding', 'Radiohead', 'Commodores', 'Diddy',
+       'SZA', 'Nicki Minaj', 'SYML']
+```
+
+
 By looping over the playlists, the additional predictors were created as per the below.
 
 
 
 ```python
+# Artist feature engineering
 artist_feature_list=[]
 
 for key, item in group_artists_by_playlist:
+    
+    #add in top 30 artists
+    category_artist_count=[]
+    for ele in popular_artists:
+        present=False
+        for artist in item['artist']:
+            if ele==artist:
+                present=True
+        category_artist_count.append(present*1)
     
     followers_mean=item['followers'].mean()
     followers_std=item['followers'].std()
@@ -1259,11 +1385,19 @@ for key, item in group_artists_by_playlist:
     top_30_40 = item['top_30_40'].sum()
     top_40_50 = item['top_40_50'].sum()
     
-    artist_feature_list.append((key, followers_mean,followers_std,popularity_mean,popularity_std,\
-                               top_10,top_10_20,top_20_30,top_30_40,top_40_50))
+    tmp=[key, followers_mean,followers_std,popularity_mean,popularity_std,\
+         top_10,top_10_20,top_20_30,top_30_40,top_40_50]
+    for i in range(len(popular_artists)):
+        tmp.append(category_artist_count[i])
+    artist_feature_list.append(tuple(tmp))
+    #artist_feature_list.append((key, followers_mean,followers_std,popularity_mean,popularity_std,\
+    #                           top_10,top_10_20,top_20_30,top_30_40,top_40_50))
 
+# Save feature names
 artist_feature_names = ['followers_mean','followers_std','popularity_mean','popularity_std',
                        'top_0_10','top_10_20','top_20_30','top_30_40','top_40_50']
+for i in range(len(popular_artists)):
+        artist_feature_names.append(popular_artists[i])
 ```
 
 
@@ -1272,6 +1406,7 @@ All the genres in a playlist were encoded to ones in the one-hot encoded genre c
 
 
 ```python
+# Splitting of genres and enumeration per playlist
 genre_list = []
 
 for key, item in group_artists_by_playlist:
@@ -1285,8 +1420,10 @@ Finally, the main artist data frame was created below:
 
 
 ```python
+# Reshape genres into array of proper dimensions
 genre_arr = np.array(genre_list).reshape(len(artist_feature_list),len(classes))
 
+# Create genre sub dataframe per playlist
 artist_genres_df = pd.DataFrame(genre_arr)
 artist_genres_df.columns = classes
 
@@ -1294,6 +1431,7 @@ artist_genres_df.columns = classes
 artist_features_df = pd.DataFrame(artist_feature_list).set_index(0)
 artist_features_df.columns = artist_feature_names
 
+# column for number of followers
 artist_features_df['Playlist_Followers'] = playlist_df[['Followers']].groupby(playlist_df['ID']).first()
 artist_features_df['ID']=artist_features_df.index
 
@@ -1416,6 +1554,7 @@ artist_main_df.head()
 
 
 ```python
+# Concatenate grouped artist sub dataframe and genre dataframe
 artist_sub_groups = [artist_main_df,artist_genres_df]
 artist_df_groups = pd.concat(artist_sub_groups,axis=1,join='inner')
 artist_df_groups = artist_df_groups.rename(columns={'': "'no_genre'"})
@@ -1427,6 +1566,7 @@ Similar to the artist feature engineering, the playlists' audio features were en
 
 
 ```python
+# Feature Engineering for track df: save to feature_list 
 feature_list = []
 
 for key, item in group_tracks_by_playlist:
@@ -1474,6 +1614,7 @@ for key, item in group_tracks_by_playlist:
                         instrumentalness_mean, instrumentalness_std, key_mean, key_std, liveness_mean, liveness_std,
                         loudness_mean, loudness_std, mode_mean, mode_std, speech_mean, speech_std, tempo_mean, tempo_std,
                         time_mean, time_std, valence_mean, valence_std))
+# Save feature names
 feature_names =  ['acousticness_mean','acousticness_std','dance_mean', 'dance_std', 'energy_mean', 'energy_std', 
                         'instrumentalness_mean', 'instrumentalness_std', 'key_mean', 'key_std', 'liveness_mean', 
                         'liveness_std','loudness_mean', 'loudness_std', 'mode_mean', 'mode_std', 'speech_mean', 
@@ -1490,6 +1631,7 @@ The engineered audio features were converted into a dataframe as follows:
 features_df = pd.DataFrame(feature_list).set_index(0)
 features_df.columns = feature_names
 
+# Column for number of followers
 features_df['Followers'] = playlist_df[['Followers']].groupby(playlist_df['ID']).first()
 features_df['ID'] = features_df.index
 
@@ -1675,6 +1817,7 @@ Finally, the last step was to create the main dataframe using an inner merge on 
 
 
 ```python
+# Concatenate the two dataframes
 master_df = pd.merge(features_main_df, artist_df_groups, how='inner', on='ID')
 master_df.head()
 ```
@@ -1872,3 +2015,330 @@ print("Number of Predictors: {}".format(master_df.shape[1]))
     Number of Playlists: 1420
     Number of Predictors: 3245
 
+
+### String Parsing / Natural Language Processing
+
+Here, we further analyze the names of the playlist based on the rationale that listeners search for key terms like 'Best', 'Hit', 'Workout' when they aim to find the relevant playlist. Due to the small size of our data, we adopted the string parsing approach for our model (which could be easily scaled with Python's NLTK package in larger models) as we don't want to exceed the dimensions of our model with too many predictors. 
+
+- After reading in the full dataset and the playlist dataset, we perform a left join based on playlist ID and add the playlist name to the full dataset
+- We search for 12 categories of specific strings that cover 'Best', 'Workout', 'Party', 'Chill', 'Acoustic', '2000s', '1990s', '1980s', '1970s', '1960s', and '1950s' using the str.contain function
+- After creating these 12 boolean variables, we transform them to binary ones (0 or 1) by *1
+- Lastly, we include those binary variables in the dataframe as predictor variables
+
+
+
+
+
+
+
+
+
+
+
+```python
+# Left Join by Playlist ID
+new_df = pd.merge(full_df, playlist_df[['Name', 'ID']], on='ID', how='left')
+new_df.shape
+```
+
+
+
+
+
+    (1420, 1494)
+
+
+
+
+
+
+
+
+
+
+
+
+
+```python
+# Search For Sub Strings
+Str_Best = full_df_concise.Name.str.contains('Best|Top|Hit|best|top|hit|Hot|hot|Pick|pick')
+Str_Workout = full_df_concise.Name.str.contains('Workout|workout|Motivation|motivation|Power|power|Cardio|')
+Str_Party = full_df_concise.Name.str.contains('Party|party')
+Str_Chill = full_df_concise.Name.str.contains('Chill|chill|Relax|relax')
+Str_Acoustic = full_df_concise.Name.str.contains('Acoustic|acoustic')
+Str_2000s = full_df_concise.Name.str.contains('20')
+Str_1990s = full_df_concise.Name.str.contains('90|91|92|93|94|95|96|97|98|99')
+Str_1980s = full_df_concise.Name.str.contains('80|81|82|83|84|85|86|87|88|89')
+Str_1970s = full_df_concise.Name.str.contains('70|71|72|73|74|75|76|77|78|79')
+Str_1960s = full_df_concise.Name.str.contains('60|61|62|63|64|65|66|67|68|69')
+Str_1950s = full_df_concise.Name.str.contains('50s')
+
+# Convert Boolean into Integers
+Str_Best = Str_Best*1
+Str_Workout = Str_Workout*1 
+Str_Party = Str_Party*1
+Str_Chill = Str_Chill*1
+Str_Acoustic = Str_Acoustic*1
+Str_2000s = Str_2000s*1
+Str_1990s = Str_1990s*1
+Str_1980s = Str_1980s*1
+Str_1970s = Str_1970s*1
+Str_1960s = Str_1960s*1
+Str_1950s = Str_1950s*1
+
+# Add to Dataframe
+full_df_concise['Str_Best'] = Str_Best
+full_df_concise['Str_Workout'] = Str_Workout
+full_df_concise['Str_Party'] = Str_Party
+full_df_concise['Str_Chill'] = Str_Chill
+full_df_concise['Str_Acoustic'] = Str_Acoustic
+full_df_concise['Str_2000s'] = Str_2000s
+full_df_concise['Str_1990s'] = Str_1990s
+full_df_concise['Str_1980s'] = Str_1980s
+full_df_concise['Str_1970s'] = Str_1970s
+full_df_concise['Str_1960s'] = Str_1960s
+full_df_concise['Str_1950s'] = Str_1950s
+```
+
+
+
+
+```python
+# Check New Column
+full_df_concise.columns[-11:-1]
+```
+
+
+
+
+
+    Index(['Str_Best', 'Str_Workout', 'Str_Party', 'Str_Chill', 'Str_Acoustic',
+           'Str_2000s', 'Str_1990s', 'Str_1980s', 'Str_1970s', 'Str_1960s'],
+          dtype='object')
+
+
+
+## Interaction Terms with Audio Features and Genre
+
+The following section describes the process of creating interaction terms between genres and audio features. Interaction terms were considered because there may be different relationships between these features and the number of playlist followers depending on the genre. For example, different levels of energy may be more popular for rap music and acoustic music.
+
+The first step was to bucket the genres (with a total of more than 100 specific genres) into broader categories. As seen below, some of the most common broad genres included: house, hip hop, pop, dance, r&b, acoustic, and soul. 
+
+
+
+```python
+broad_genres = ['house','hip hop','pop','dance','r&b','rap','acoustic','soul']
+
+broad_genres = pd.DataFrame(np.zeros((full_df_concise.shape[0], len(broad_genres))), columns = broad_genres)
+```
+
+
+
+
+```python
+for genre in broad_genres:  
+    for data_col in full_df_concise.columns:
+        if genre in data_col:
+            indices = full_df_concise[(full_df_concise[data_col]==1)].index
+            broad_genres[genre][indices] = 1
+
+```
+
+
+Next, interaction terms were made between these genre categories and certain audio features. Below are the interaction terms that were used. These features were selected through a separate analysis in which all of the genres, audio features, and all possible interactions were used as predictors to model the number of playlist followers. It was found that the interaction terms listed below were significant. 
+
+
+
+```python
+# Adding significant interaction terms from previous model
+interaction_columns = ['house_acousticness_mean','hip hop_acousticness_std','pop_liveness_std','dance_liveness_std',
+                      'r&b_acousticness_std','rap_energy_std','rap_key_std','acoustic_acousticness_std','acoustic_acousticness_mean',
+                      'acoustic_energy_std','acoustic_key_std','soul_acousticness_std']
+
+
+full_df_concise['house_acousticness_mean'] = broad_genres['house']*full_df_concise['acousticness_mean']
+full_df_concise['hip hop_acousticness_std'] = broad_genres['hip hop']*full_df_concise['acousticness_std']
+full_df_concise['pop_liveness_std'] = broad_genres['pop']*full_df_concise['liveness_std']
+full_df_concise['dance_liveness_std'] = broad_genres['dance']*full_df_concise['liveness_std']
+full_df_concise['r&b_acousticness_std'] = broad_genres['r&b']*full_df_concise['acousticness_std']
+full_df_concise['rap_energy_std'] = broad_genres['rap']*full_df_concise['energy_std']
+full_df_concise['rap_key_std'] = broad_genres['rap']*full_df_concise['key_std']
+full_df_concise['acoustic_acousticness_std'] = broad_genres['acoustic']*full_df_concise['acousticness_std']
+full_df_concise['acoustic_acousticness_mean'] = broad_genres['acoustic']*full_df_concise['acousticness_mean']
+full_df_concise['acoustic_energy_std'] = broad_genres['acoustic']*full_df_concise['energy_std']
+full_df_concise['acoustic_key_std'] = broad_genres['acoustic']*full_df_concise['key_std']
+full_df_concise['soul_acousticness_std'] = broad_genres['soul']*full_df_concise['acousticness_std']
+
+```
+
+
+
+
+```python
+full_df_concise[interaction_columns].describe()
+```
+
+
+
+
+
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>house_acousticness_mean</th>
+      <th>hip hop_acousticness_std</th>
+      <th>pop_liveness_std</th>
+      <th>dance_liveness_std</th>
+      <th>r&amp;b_acousticness_std</th>
+      <th>rap_energy_std</th>
+      <th>rap_key_std</th>
+      <th>acoustic_acousticness_std</th>
+      <th>acoustic_acousticness_mean</th>
+      <th>acoustic_energy_std</th>
+      <th>acoustic_key_std</th>
+      <th>soul_acousticness_std</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>1420.000000</td>
+      <td>1418.000000</td>
+      <td>1418.000000</td>
+      <td>1418.000000</td>
+      <td>1418.000000</td>
+      <td>1418.000000</td>
+      <td>1418.000000</td>
+      <td>1418.000000</td>
+      <td>1420.000000</td>
+      <td>1418.000000</td>
+      <td>1418.000000</td>
+      <td>1418.000000</td>
+    </tr>
+    <tr>
+      <th>mean</th>
+      <td>0.224109</td>
+      <td>0.235339</td>
+      <td>0.156279</td>
+      <td>0.137165</td>
+      <td>0.239961</td>
+      <td>0.210305</td>
+      <td>0.210305</td>
+      <td>0.102606</td>
+      <td>0.115892</td>
+      <td>0.080324</td>
+      <td>0.080324</td>
+      <td>0.173310</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>0.212280</td>
+      <td>0.144852</td>
+      <td>0.056181</td>
+      <td>0.073726</td>
+      <td>0.143718</td>
+      <td>0.094412</td>
+      <td>0.094412</td>
+      <td>0.150939</td>
+      <td>0.190786</td>
+      <td>0.117964</td>
+      <td>0.117964</td>
+      <td>0.162756</td>
+    </tr>
+    <tr>
+      <th>min</th>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>25%</th>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.129984</td>
+      <td>0.111896</td>
+      <td>0.160846</td>
+      <td>0.204460</td>
+      <td>0.204460</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>0.221718</td>
+      <td>0.302918</td>
+      <td>0.155873</td>
+      <td>0.149616</td>
+      <td>0.306497</td>
+      <td>0.238572</td>
+      <td>0.238572</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.240984</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>0.366849</td>
+      <td>0.341949</td>
+      <td>0.185451</td>
+      <td>0.180391</td>
+      <td>0.344083</td>
+      <td>0.267752</td>
+      <td>0.267752</td>
+      <td>0.285148</td>
+      <td>0.228570</td>
+      <td>0.220703</td>
+      <td>0.220703</td>
+      <td>0.332228</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>0.961000</td>
+      <td>0.428986</td>
+      <td>0.351859</td>
+      <td>0.351859</td>
+      <td>0.444861</td>
+      <td>0.371096</td>
+      <td>0.371096</td>
+      <td>0.444861</td>
+      <td>0.961000</td>
+      <td>0.347747</td>
+      <td>0.347747</td>
+      <td>0.420705</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+The final dataframe has been created, and the next step is to model with the features created. 

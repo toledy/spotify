@@ -464,14 +464,6 @@ features_df.head()
 
 
 
-
-
-```python
-# Save as csv file
-features_df.to_csv('track_features(track_indices).csv', sep=',')
-```
-
-
 ### Collect Spotify Artist Information Per Track in Playlist
 
 Following a similar procedure as the audio feature extraction, artist information for every track in every playlist was extracted next. First, a function was defined to retrieve artist information given an artist name.
@@ -607,13 +599,6 @@ artist_information.head()
 </div>
 
 
-
-
-
-```python
-# Save as csv file
-artist_information.to_csv('artists(track_indices).csv', sep=',')
-```
 
 
 ## Data Wrangling
@@ -1512,13 +1497,6 @@ master_df.head()
 The master dataframe was saved for EDA purposes next and final dataframe size was presented.
 
 
-
-```python
-master_df.to_csv('spotify_data_master.csv', sep=',')
-```
-
-
-
     Number of Playlists: 1420
     Number of Predictors: 3245
 
@@ -1531,14 +1509,6 @@ Here, we further analyze the names of the playlist based on the rationale that l
 - We search for 12 categories of specific strings that cover 'Best', 'Workout', 'Party', 'Chill', 'Acoustic', '2000s', '1990s', '1980s', '1970s', '1960s', and '1950s' using the str.contain function
 - After creating these 12 boolean variables, we transform them to binary ones (0 or 1) by *1
 - Lastly, we include those binary variables in the dataframe as predictor variables
-
-
-
-
-
-
-
-
 
 
 
@@ -1580,8 +1550,6 @@ The first step was to bucket the genres (with a total of more than 100 specific 
 
 ```python
 broad_genres = ['house','hip hop','pop','dance','r&b','rap','acoustic','soul']
-
-broad_genres = pd.DataFrame(np.zeros((full_df_concise.shape[0], len(broad_genres))), columns = broad_genres)
 ```
 
 
@@ -1595,16 +1563,8 @@ interaction_columns = ['house_acousticness_mean','hip hop_acousticness_std','pop
                       'r&b_acousticness_std','rap_energy_std','rap_key_std','acoustic_acousticness_std','acoustic_acousticness_mean',
                       'acoustic_energy_std','acoustic_key_std','soul_acousticness_std']
 
-```
-
-
-
-
-```python
 full_df_concise[interaction_columns].describe()
 ```
-
-
 
 
 

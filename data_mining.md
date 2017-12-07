@@ -1137,7 +1137,7 @@ artist_main_df.head()
 
 #### Audio Feature Engineering
 
-Similar to the artist feature engineering, the playlists' audio features were engineered next. Specifically, for ever audio feature mined from Spotify, the mean and standard deviation across all playlist tracks was computed. The engineered audio features were converted into a dataframe as follows:
+Similar to the artist feature engineering, the playlists' audio features were engineered next. Specifically, for every audio feature mined from Spotify, the mean and standard deviation across all playlist tracks was computed. The engineered audio features were converted into a dataframe as follows:
 
 
 

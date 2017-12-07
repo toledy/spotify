@@ -285,19 +285,6 @@ def get_playlist_tracks(username, playlist_id):
 
 Running the feature extraction from Spotify could take a significant amount of time and could also be prone to raise errors in the process. To avoid losing information when such error occurs, a dictionary was used in cache memory.
 
-
-```python
-# Define an example list of songs for the first 10 playlists
-songs_playlist = []
-
-for item,playlist in enumerate(playlist_tracks):
-    track_len = len(playlist_tracks[playlist])
-    for song_item,song in enumerate(playlist_tracks[playlist]):
-        songs_playlist.append((playlist,playlist_tracks[playlist][song_item]['track']['id']))
-        
-print("Number of Songs in Playlists: {}".format(len(songs_playlist)))
-```
-
 Audio features were extracted using the below code - note running this code on all playlists takes a significant amount of time (measured in hours).
 
 
@@ -499,29 +486,6 @@ def get_artist(name):
         return items[0]
     else:
         return None
-```
-
-
-The playlists were prepped for artist feature extraction.
-
-
-
-```python
-# Define an example list of songs for the first 10 playlists
-artist_list = []
-song_dict = dict()
-playlist_dict = dict()
-
-for play_index,playlist in enumerate(playlist_tracks):
-    songs = playlist_tracks[playlist]
-    for song_index,song in enumerate(songs):
-        no_artists = len(song['track']['artists'])
-        for number in range(no_artists):
-            name = song['track']['artists'][number]['name']
-            song_id = song['track']['id']
-            artist_list.append((playlist,song_id,name))
-            song_dict[name] = song_id
-            playlist_dict[name] = playlist
 ```
 
 

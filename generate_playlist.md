@@ -1,7 +1,7 @@
 ---
 title: Playlist Generation & Conclusion
 notebook: generate_playlist.ipynb
-nav_include: 5
+nav_include: 6
 ---
 
 ## Contents

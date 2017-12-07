@@ -397,9 +397,6 @@ for item,song in enumerate(songs):
 sys.stdout.write("\r%d%%" % 100)
 ```
 
-
-    100%
-
 Once all the audio features were extracted, they were converted into the main audio feature dataframe and saved down as a large csv file.
 
 
@@ -668,9 +665,6 @@ for item,artist in enumerate(artists):
 
 sys.stdout.write("\r%d%%" % 100)
 ```
-
-
-    100%
 
 Once all the artist features were extracted, they were converted into the main artist feature dataframe and saved down as a large csv file.
 

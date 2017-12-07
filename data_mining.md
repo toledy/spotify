@@ -160,32 +160,7 @@ data.head()
 
 
 
-For each playlist, the number of followers is obtained - this number will be the response variable for our regression based models.
-
-
-
-```python
-playlist_follower = []
-
-for i in range(0, len(data['URI'])-1): 
-    
-    # If number of followers is greater than 0
-    if data['No. of Tracks'][i] > 0:
-        uri = data['URI'][i]
-        username = uri.split(':')[2]
-        playlist_id = uri.split(':')[4]
-        results = sp.user_playlist(username, playlist_id)
-        followers = results['followers']['total']
-        playlist_follower.append(followers)
-    
-    # If follower count is 0, append 0   
-    else: 
-        followers = 0
-        playlist_follower.append(followers)
-```
-
-
-Finally - the number of followers is concatenated to the playlist dataframe.
+For each playlist, the number of followers is obtained - this number will be the response variable for our regression based models. Finally - the number of followers is concatenated to the playlist dataframe.
 
 
 
@@ -289,7 +264,7 @@ Following the above outlined steps, we are able to produce a dataframe consistin
 Using the dataframe of playlists - and specifically the playlist id column - we iterate over all tracks in every playlist and pull relevant audio features which could potentially be helpful in predicting the success of a playlist.
 Audio features refers to acousticness, energy, key, valence and etc.
 
-To this extent, we defin a function to pull all playlists' tracks.
+To this extent, we define a function to pull all playlists' tracks.
 
 
 
@@ -304,63 +279,7 @@ def get_playlist_tracks(username, playlist_id):
 ```
 
 
-Running the feature extraction from Spotify could take a significant amount of time and also tend to raise errors in the process. To avoid losing information when such error occurs, a dictionary is used in cache memory.
-
-
-
-```python
-Spotify_playlists = data.iloc[0:10]
-
-playlist_tracks = dict()
-```
-
-
-The playlists are prepped for audio feature extraction.
-
-
-
-```python
-for playlist in Spotify_playlists["ID"]:
-    if Spotify_playlists.loc[Spotify_playlists['ID'] == playlist, 'No. of Tracks'].item() > 0:
-        try:
-            playlist_tracks[playlist] = get_playlist_tracks('spotify', playlist)
-            time.sleep(random.randint(1, 3))
-        except:
-            pass
-```
-
-
-
-
-```python
-songs_playlist = []
-
-for item,playlist in enumerate(playlist_tracks):
-    track_len = len(playlist_tracks[playlist])
-    for song_item,song in enumerate(playlist_tracks[playlist]):
-        songs_playlist.append((playlist,playlist_tracks[playlist][song_item]['track']['id']))
-        
-print("Number of Songs in Playlists: {}".format(len(songs_playlist)))
-```
-
-
-    Number of Songs in Playlists: 663
-
-
-Again, a dictionary in cache memory is set up for the main audio feature extraction loop.
-
-
-
-```python
-songs = [item[1] for item in songs_playlist]
-
-audio_feat = dict()
-limit_songs_small = 10
-limit_songs_medium = 200
-```
-
-
-Audio features are extracted using the below code - note running this code on all playlists takes a significant amount of time (measured in hours).
+Running the feature extraction from Spotify could take a significant amount of time and also tend to raise errors in the process. To avoid losing information when such error occurs, a dictionary is used in cache memory. Audio features are extracted using the below code - note running this code on all playlists takes a significant amount of time (measured in hours).
 
 
 
@@ -385,77 +304,18 @@ for item,song in enumerate(songs):
 sys.stdout.write("\r%d%%" % 100)
 ```
 
-
-    100%
-
 Once all the audio features are extracted, they are converted into the main audio feature dataframe and saved as a large csv file.
-
-
-
-```python
-acousticness = dict()
-danceability = dict()
-duration_ms = dict()
-energy = dict()
-instrumentalness = dict()
-key = dict()
-liveness = dict()
-loudness = dict()
-mode = dict()
-speechiness = dict()
-tempo = dict()
-time_signature = dict()
-valence = dict()
-
-for item,song in enumerate(audio_feat):
-    try:
-        acousticness[song] = audio_feat[song][0]['acousticness']
-        danceability[song] = audio_feat[song][0]['danceability']
-        duration_ms[song] = audio_feat[song][0]['duration_ms']
-        energy[song] = audio_feat[song][0]['energy']
-        instrumentalness[song] = audio_feat[song][0]['instrumentalness']
-        key[song] = audio_feat[song][0]['key']
-        liveness[song] = audio_feat[song][0]['liveness']
-        loudness[song] = audio_feat[song][0]['loudness']
-        mode[song] = audio_feat[song][0]['mode']
-        speechiness[song] = audio_feat[song][0]['speechiness']
-        tempo[song] = audio_feat[song][0]['tempo']
-        time_signature[song] = audio_feat[song][0]['time_signature']
-        valence[song] = audio_feat[song][0]['valence']
-    except TypeError:
-        pass
-```
-
-
-
-
-```python
-acc_df = pd.DataFrame(pd.Series(acousticness)).reset_index().rename(columns={'index': 'song', 0: 'acousticness'})
-dan_df = pd.DataFrame(pd.Series(danceability)).reset_index().rename(columns={'index': 'song', 0: 'dance'})
-dur_df = pd.DataFrame(pd.Series(duration_ms)).reset_index().rename(columns={'index': 'song', 0: 'duration'})
-ene_df = pd.DataFrame(pd.Series(energy)).reset_index().rename(columns={'index': 'song', 0: 'energy'})
-inst_df = pd.DataFrame(pd.Series(instrumentalness)).reset_index().rename(columns={'index': 'song', 0: 'instrumentalness'})
-key_df = pd.DataFrame(pd.Series(key)).reset_index().rename(columns={'index': 'song', 0: 'key'})
-live_df = pd.DataFrame(pd.Series(liveness)).reset_index().rename(columns={'index': 'song', 0: 'liveness'})
-loud_df = pd.DataFrame(pd.Series(loudness)).reset_index().rename(columns={'index': 'song', 0: 'loudness'})
-mode_df = pd.DataFrame(pd.Series(mode)).reset_index().rename(columns={'index': 'song', 0: 'mode'})
-spee_df = pd.DataFrame(pd.Series(speechiness)).reset_index().rename(columns={'index': 'song', 0: 'speech'})
-temp_df = pd.DataFrame(pd.Series(tempo)).reset_index().rename(columns={'index': 'song', 0: 'tempo'})
-time_df = pd.DataFrame(pd.Series(time_signature)).reset_index().rename(columns={'index': 'song', 0: 'time'})
-vale_df = pd.DataFrame(pd.Series(valence)).reset_index().rename(columns={'index': 'song', 0: 'valence'})
-```
-
 
 
 
 ```python
 playlist_df = pd.DataFrame(songs_playlist,columns=['playlist','song'])
 
-frame_V1 = [acc_df,dan_df,dur_df,ene_df,inst_df,key_df,live_df,loud_df,mode_df,spee_df,temp_df,time_df,vale_df]
-features = pd.concat(frame_V1,axis=1).T.groupby(level=0).first().T
+frame_one = [acc_df,dan_df,dur_df,ene_df,inst_df,key_df,live_df,loud_df,mode_df,spee_df,temp_df,time_df,vale_df]
+features = pd.concat(frame_one,axis=1).T.groupby(level=0).first().T
 
-frame_V2 = [features,playlist_df]
-features_df = pd.concat(frame_V2,axis=1).T.groupby(level=0).first().T.dropna()
+frame_two = [features,playlist_df]
+features_df = pd.concat(frame_two,axis=1).T.groupby(level=0).first().T.dropna()
 
 features_df.head()
 ```
@@ -596,28 +456,11 @@ features_df.head()
 
 
 
-
-
-```python
-features_df.to_csv('track_features(track_indices).csv', sep=',')
-```
-
-
 ### Collect Spotify Artist Information Per Track in Playlist
 
 Following a similar procedure as the audio feature extraction, artist information for every track in every playlist is extracted next.
 
 First, a function is defined to retrieve artist information given an artist name.
-
-
-
-```python
-Spotify_playlists = data.iloc[0:10]
-
-playlist_tracks = dict()
-```
-
-
 
 
 ```python
@@ -631,55 +474,8 @@ def get_artist(name):
 ```
 
 
-The playlists are prepped for audio feature extraction.
 
-
-
-```python
-for playlist in Spotify_playlists["ID"]:
-    if Spotify_playlists.loc[Spotify_playlists['ID'] == playlist, 'No. of Tracks'].item() > 0:
-        try:
-            playlist_tracks[playlist] = get_playlist_tracks('spotify', playlist)
-            time.sleep(random.randint(1, 3))
-        except:
-            pass
-```
-
-
-
-
-```python
-artist_list = []
-song_dict = dict()
-playlist_dict = dict()
-
-for play_index,playlist in enumerate(playlist_tracks):
-    songs = playlist_tracks[playlist]
-    for song_index,song in enumerate(songs):
-        no_artists = len(song['track']['artists'])
-        for number in range(no_artists):
-            name = song['track']['artists'][number]['name']
-            song_id = song['track']['id']
-            artist_list.append((playlist,song_id,name))
-            song_dict[name] = song_id
-            playlist_dict[name] = playlist
-```
-
-
-Again, a dictionary in cache memory is setup for the main artist feature extraction loop.
-
-
-
-```python
-artists = list(set([item[2] for item in artist_list]))
-
-artist_info = dict()
-limit_artist_small = 10
-limit_artist_medium = 200
-```
-
-
-Artist features are extracted using the code below - note running this code on all playlists takes a significant amount of time (measured in hours).
+Again, a dictionary in cache memory is setup for the main artist feature extraction loop. Artist features are extracted using the code below - note running this code on all playlists takes a significant amount of time (measured in hours).
 
 
 
@@ -704,44 +500,12 @@ for item,artist in enumerate(artists):
 sys.stdout.write("\r%d%%" % 100)
 ```
 
-
-    100%
-
 Once all the artist features are extracted, they are converted into the main artist feature dataframe and saved as a large csv file.
 
 
-
 ```python
-followers = dict()
-genres = dict()
-popularity = dict()
-
-for item,artist in enumerate(artist_info):
-    try:
-        followers[artist] = artist_info[artist]['followers']['total']
-        genres[artist] = artist_info[artist]['genres']
-        popularity[artist] = artist_info[artist]['popularity']
-    except TypeError:
-        pass
-```
-
-
-
-
-```python
-follow_df = pd.DataFrame(pd.Series(followers)).reset_index().rename(columns={'index': 'artist', 0: 'followers'})
-genres_df = pd.DataFrame(pd.Series(genres)).reset_index().rename(columns={'index': 'artist', 0: 'genres'})
-popularity_df = pd.DataFrame(pd.Series(popularity)).reset_index().rename(columns={'index': 'artist', 0: 'popularity'})
-song_df = pd.DataFrame(pd.Series(song_dict)).reset_index().rename(columns={'index': 'artist', 0: 'song'})
-playlist_df = pd.DataFrame(pd.Series(playlist_dict)).reset_index().rename(columns={'index': 'artist', 0: 'playlist'})
-```
-
-
-
-
-```python
-frame_V1 = [follow_df,genres_df,popularity_df,song_df, playlist_df]
-artist_information = pd.concat(frame_V1,axis=1).T.groupby(level=0).first().T
+frame_one = [follow_df,genres_df,popularity_df,song_df, playlist_df]
+artist_information = pd.concat(frame_one,axis=1).T.groupby(level=0).first().T
 artist_information.head()
 ```
 
@@ -825,13 +589,6 @@ artist_information.head()
 </table>
 </div>
 
-
-
-
-
-```python
-artist_information.to_csv('artists(track_indices).csv', sep=',')
-```
 
 
 ## Data Wrangling
@@ -1990,7 +1747,7 @@ full_df_concise.columns[-11:-1]
 
 
 
-## Interaction Terms with Audio Features and Genre
+### Interaction Terms with Audio Features and Genre
 
 The following section describes the process of creating interaction terms between genres and audio features. Interaction terms are considered because genre may have an effect on the relationships between audio features and the number of playlist followers. For example, different levels of energy may be more popular for rap music than for acoustic music.
 

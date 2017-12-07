@@ -31,22 +31,26 @@ Spotify’s business model is, to a significant extent, centered around providin
 | Unique Artists    | 28,915     |
 | Unique Predictors | >3,000     |
 
-Please refer to [Data Wrangling](https://toledy.github.io/spotify/data_mining_and_wrangling.html) for more information on the data mining and wrangling procedures employed.
+Please refer to [Data Mining & Wrangling](https://toledy.github.io/spotify/data_mining.html) for more information on the data mining and wrangling procedures employed.
 
-Please refer to [EDA](https://toledy.github.io/spotify/eda.html) for more in-depth insights into the exploratory data analysis.
+Please refer to [Exploratory Data Analysis](https://toledy.github.io/spotify/eda.html) for more in-depth insights into the exploratory data analysis.
 
 ## Modeling Approach and Project Trajectory
 
 Please refer to [Baseline Models](https://toledy.github.io/spotify/baseline_models.html) for more information on the baseline models employed.
 
-Please refer to [Ensemble Models](https://toledy.github.io/spotify/ensemble_methods.html) for more information on the advanced models employed.
+Please refer to [Advanced Models](https://toledy.github.io/spotify/advanced_models.html) for more information on the advanced models employed.
 
 
 ## Results, Conclusions, and Future Work
 
-To come
+Please refer to [Model Inference](https://toledy.github.io/spotify/inference.html) for more information on the chosen model.
 
-## Literature Review / Related Work / Sources
+Please refer to [Playlist Generation & Conclusion](https://toledy.github.io/spotify/generate_playlist.html) for more information.
+
+## Literature / Related Work / Sources
+
+[1] Hastie, T., Hastie, T., Tibshirani, R., & Friedman, J. H. (2001). The elements of statistical learning: Data mining, inference, and prediction. New York: Springer.
 
 We would be remiss not to mention both the Spotify API:
 

@@ -10,6 +10,12 @@ nav_include: 5
 {: toc}
 
 
+## Source Code
+
+Please refer to [Model Inference](https://github.com/toledy/spotify/blob/master/notebooks/inference.ipynb) for the source code (Jupyter Notebook).
+
+
+
 ## Predictor Importance
 
 We choose Gradient Boosting Regression as the best model to predict playlist popularity. This model has high interpretablilty, enabling us to analyze the most important features and qualities of popular playlists. To evaluate the importance of predictors for the gradient boosting tree, we use scores determined by the usefulness of the certain predictor during the construction of trees. 

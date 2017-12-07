@@ -10,6 +10,11 @@ nav_include: 6
 {: toc}
 
 
+## Source Code
+
+Please refer to [Playlist Generation & Conclusion](https://github.com/toledy/spotify/blob/master/notebooks/generate_playlist.ipynb) for the source code (Jupyter Notebook).
+
+
 
 ## Generating Successful Playlists
 

@@ -9,6 +9,12 @@ nav_include: 4
 *  
 {: toc}
 
+
+## Source Code
+
+Please refer to [Advanced Models](https://github.com/toledy/spotify/blob/master/notebooks/advanced_models.ipynb) for the source code (Jupyter Notebook).
+
+
 **Strategy of Fitting Advanced Models**<br/> 
 
 1) **Data Pre-Processing**: After reading in the dataframe, we first split the training/test data by (90%-10% split) due to the small size of the dataset. Then,we standardize the numerical columns, and finally we check for any missing data and imput accordingly. 

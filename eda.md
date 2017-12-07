@@ -13,15 +13,9 @@ nav_include: 2
 After gathering and processing initial data, the next step is to conduct exploratory data anlaysis. We would like to examine which predictors include useful information. EDA will further enlighten us on the modelling process as well. 
 
 
+## Source Code
 
-
-
-
-
-
-
-
-
+Please refer to [Exploratory Data Analysis](https://github.com/toledy/spotify/blob/master/notebooks/eda.ipynb) for the source code (Jupyter Notebook).
 
 
 ## Predictor Variables

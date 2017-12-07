@@ -10,6 +10,12 @@ nav_include: 3
 {: toc}
 
 
+
+## Source Code
+
+Please refer to [Baseline Models](https://github.com/toledy/spotify/blob/master/notebooks/baseline_models.ipynb) for the source code (Jupyter Notebook).
+
+
 ## Baseline Models 
 
 In this section, our goal is to examine the baseline performance of simple regression models on the test set. We would use these baseline test set $R^2$ score as a reference for building more complex models. The models included in this section are mostly multi-linear regression models with different subset of predictors and possible polynomial/interaction terms. PCA and Lasso/Ridge are explored here as well. 

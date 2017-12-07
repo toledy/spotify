@@ -506,7 +506,7 @@ Unsurprisingly, the popularity of the artist has a great significance on the pop
 ![png](inference_files/inference_50_0.png)
 
 
-The residuals plot above shows the difference between the predicted fitted values and the actual values, $\hat{y}-y$. The plot shows a pattern that is similar to a diamond. We observe that they are very dense around 10 (in log scale). A possible cause of this pattern in the residuals plot is the distribution of the response (in log scale), which is slightly left skewed. This is shown below. Consequently, the residuals will be high around 10. We can also observe that the distribution of the fitted values is narrower than the true response. 
+The residuals plot above shows the difference between the predicted fitted values and the actual values, $\hat{y}-y$. The plot shows a pattern that is similar to a diamond. We observe that they are very dense around 12 (in log scale). A possible cause of this pattern in the residuals plot is the distribution of the response (in log scale), which is slightly left skewed. This is shown below. Consequently, the residuals will be high around 12. We can also observe that the distribution of the fitted values is narrower than the true response. Overall, the residuals seem to show heteroskedasticity which may require further investigation in future works.
 
 
 

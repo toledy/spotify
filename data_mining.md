@@ -70,70 +70,6 @@ while playlists:
 ```
 
 
-
-    ---------------------------------------------------------------------------
-
-    SpotifyOauthError                         Traceback (most recent call last)
-
-    <ipython-input-4-435cbbc58e0d> in <module>()
-          1 # Get all spotify playlists
-    ----> 2 playlists = sp.user_playlists('spotify')
-          3 
-          4 # Empty list to hold playlist information
-          5 spotify_playlists = []
-
-
-    /Users/liutianhan/anaconda/lib/python3.6/site-packages/spotipy/client.py in user_playlists(self, user, limit, offset)
-        364         '''
-        365         return self._get("users/%s/playlists" % user, limit=limit,
-    --> 366                          offset=offset)
-        367 
-        368     def user_playlist(self, user, playlist_id=None, fields=None):
-
-
-    /Users/liutianhan/anaconda/lib/python3.6/site-packages/spotipy/client.py in _get(self, url, args, payload, **kwargs)
-        144         while retries > 0:
-        145             try:
-    --> 146                 return self._internal_call('GET', url, payload, kwargs)
-        147             except SpotifyException as e:
-        148                 retries -= 1
-
-
-    /Users/liutianhan/anaconda/lib/python3.6/site-packages/spotipy/client.py in _internal_call(self, method, url, payload, params)
-         98         if not url.startswith('http'):
-         99             url = self.prefix + url
-    --> 100         headers = self._auth_headers()
-        101         headers['Content-Type'] = 'application/json'
-        102 
-
-
-    /Users/liutianhan/anaconda/lib/python3.6/site-packages/spotipy/client.py in _auth_headers(self)
-         88             return {'Authorization': 'Bearer {0}'.format(self._auth)}
-         89         elif self.client_credentials_manager:
-    ---> 90             token = self.client_credentials_manager.get_access_token()
-         91             return {'Authorization': 'Bearer {0}'.format(token)}
-         92         else:
-
-
-    /Users/liutianhan/anaconda/lib/python3.6/site-packages/spotipy/oauth2.py in get_access_token(self)
-         55             return self.token_info['access_token']
-         56 
-    ---> 57         token_info = self._request_access_token()
-         58         token_info = self._add_custom_values_to_token_info(token_info)
-         59         self.token_info = token_info
-
-
-    /Users/liutianhan/anaconda/lib/python3.6/site-packages/spotipy/oauth2.py in _request_access_token(self)
-         74             headers=headers, verify=True, proxies=self.proxies)
-         75         if response.status_code is not 200:
-    ---> 76             raise SpotifyOauthError(response.reason)
-         77         token_info = response.json()
-         78         return token_info
-
-
-    SpotifyOauthError: Bad Request
-
-
 The obtained baseline playlist features were converted into a large dataframe next.
 
 
@@ -469,72 +405,14 @@ Once all the audio features were extracted, they were converted into the main au
 
 
 ```python
-# Convert raw data into dictionaries
-acousticness = dict()
-danceability = dict()
-duration_ms = dict()
-energy = dict()
-instrumentalness = dict()
-key = dict()
-liveness = dict()
-loudness = dict()
-mode = dict()
-speechiness = dict()
-tempo = dict()
-time_signature = dict()
-valence = dict()
-
-for item,song in enumerate(audio_feat):
-    try:
-        acousticness[song] = audio_feat[song][0]['acousticness']
-        danceability[song] = audio_feat[song][0]['danceability']
-        duration_ms[song] = audio_feat[song][0]['duration_ms']
-        energy[song] = audio_feat[song][0]['energy']
-        instrumentalness[song] = audio_feat[song][0]['instrumentalness']
-        key[song] = audio_feat[song][0]['key']
-        liveness[song] = audio_feat[song][0]['liveness']
-        loudness[song] = audio_feat[song][0]['loudness']
-        mode[song] = audio_feat[song][0]['mode']
-        speechiness[song] = audio_feat[song][0]['speechiness']
-        tempo[song] = audio_feat[song][0]['tempo']
-        time_signature[song] = audio_feat[song][0]['time_signature']
-        valence[song] = audio_feat[song][0]['valence']
-    except TypeError:
-        pass
-```
-
-
-
-
-```python
-# Creation of audio feature dataframes from dictionaries
-acc_df = pd.DataFrame(pd.Series(acousticness)).reset_index().rename(columns={'index': 'song', 0: 'acousticness'})
-dan_df = pd.DataFrame(pd.Series(danceability)).reset_index().rename(columns={'index': 'song', 0: 'dance'})
-dur_df = pd.DataFrame(pd.Series(duration_ms)).reset_index().rename(columns={'index': 'song', 0: 'duration'})
-ene_df = pd.DataFrame(pd.Series(energy)).reset_index().rename(columns={'index': 'song', 0: 'energy'})
-inst_df = pd.DataFrame(pd.Series(instrumentalness)).reset_index().rename(columns={'index': 'song', 0: 'instrumentalness'})
-key_df = pd.DataFrame(pd.Series(key)).reset_index().rename(columns={'index': 'song', 0: 'key'})
-live_df = pd.DataFrame(pd.Series(liveness)).reset_index().rename(columns={'index': 'song', 0: 'liveness'})
-loud_df = pd.DataFrame(pd.Series(loudness)).reset_index().rename(columns={'index': 'song', 0: 'loudness'})
-mode_df = pd.DataFrame(pd.Series(mode)).reset_index().rename(columns={'index': 'song', 0: 'mode'})
-spee_df = pd.DataFrame(pd.Series(speechiness)).reset_index().rename(columns={'index': 'song', 0: 'speech'})
-temp_df = pd.DataFrame(pd.Series(tempo)).reset_index().rename(columns={'index': 'song', 0: 'tempo'})
-time_df = pd.DataFrame(pd.Series(time_signature)).reset_index().rename(columns={'index': 'song', 0: 'time'})
-vale_df = pd.DataFrame(pd.Series(valence)).reset_index().rename(columns={'index': 'song', 0: 'valence'})
-```
-
-
-
-
-```python
 # Merge individual dataframes into one features dataframe
 playlist_df = pd.DataFrame(songs_playlist,columns=['playlist','song'])
 
-frame_V1 = [acc_df,dan_df,dur_df,ene_df,inst_df,key_df,live_df,loud_df,mode_df,spee_df,temp_df,time_df,vale_df]
-features = pd.concat(frame_V1,axis=1).T.groupby(level=0).first().T
+frame_one = [acc_df,dan_df,dur_df,ene_df,inst_df,key_df,live_df,loud_df,mode_df,spee_df,temp_df,time_df,vale_df]
+features = pd.concat(frame_one,axis=1).T.groupby(level=0).first().T
 
-frame_V2 = [features,playlist_df]
-features_df = pd.concat(frame_V2,axis=1).T.groupby(level=0).first().T.dropna()
+frame_two = [features,playlist_df]
+features_df = pd.concat(frame_two,axis=1).T.groupby(level=0).first().T.dropna()
 
 features_df.head()
 ```
@@ -799,39 +677,9 @@ Once all the artist features were extracted, they were converted into the main a
 
 
 ```python
-# Convert raw data into dictionaries
-followers = dict()
-genres = dict()
-popularity = dict()
-
-for item,artist in enumerate(artist_info):
-    try:
-        followers[artist] = artist_info[artist]['followers']['total']
-        genres[artist] = artist_info[artist]['genres']
-        popularity[artist] = artist_info[artist]['popularity']
-    except TypeError:
-        pass
-```
-
-
-
-
-```python
-# Creation of artist feature dataframes from dictionaries
-follow_df = pd.DataFrame(pd.Series(followers)).reset_index().rename(columns={'index': 'artist', 0: 'followers'})
-genres_df = pd.DataFrame(pd.Series(genres)).reset_index().rename(columns={'index': 'artist', 0: 'genres'})
-popularity_df = pd.DataFrame(pd.Series(popularity)).reset_index().rename(columns={'index': 'artist', 0: 'popularity'})
-song_df = pd.DataFrame(pd.Series(song_dict)).reset_index().rename(columns={'index': 'artist', 0: 'song'})
-playlist_df = pd.DataFrame(pd.Series(playlist_dict)).reset_index().rename(columns={'index': 'artist', 0: 'playlist'})
-```
-
-
-
-
-```python
 # Merge individual dataframes into one features dataframe
-frame_V1 = [follow_df,genres_df,popularity_df,song_df, playlist_df]
-artist_information = pd.concat(frame_V1,axis=1).T.groupby(level=0).first().T
+frame_one = [follow_df,genres_df,popularity_df,song_df, playlist_df]
+artist_information = pd.concat(frame_one,axis=1).T.groupby(level=0).first().T
 artist_information.head()
 ```
 
@@ -1320,38 +1168,7 @@ In terms of artists, feature engineering led to the following predictors:
 * Two columns representing the mean and standard deviation of artists popularity per playlist
 * Artist genres were one-hot encoded
 
-First, the top 50 artists (in terms of number of Spotify followers) were listed. Final dataframe columns list the number of times these artists appear in a playlist.
-
-
-
-```python
-top_10_followers = list(artist_df.sort_values('followers',ascending=False)['artist'].unique()[:10])
-top_10_20_followers = list(artist_df.sort_values('followers',ascending=False)['artist'].unique()[10:20])
-top_20_30_followers = list(artist_df.sort_values('followers',ascending=False)['artist'].unique()[20:30])
-top_30_40_followers = list(artist_df.sort_values('followers',ascending=False)['artist'].unique()[30:40])
-top_40_50_followers = list(artist_df.sort_values('followers',ascending=False)['artist'].unique()[40:50])
-
-artist_df['top_0_10'] = np.where(artist_df['artist'].isin(top_10_followers), 1, 0)
-artist_df['top_10_20'] = np.where(artist_df['artist'].isin(top_10_20_followers), 1, 0)
-artist_df['top_20_30'] = np.where(artist_df['artist'].isin(top_20_30_followers), 1, 0)
-artist_df['top_30_40'] = np.where(artist_df['artist'].isin(top_30_40_followers), 1, 0)
-artist_df['top_40_50'] = np.where(artist_df['artist'].isin(top_40_50_followers), 1, 0)
-```
-
-
-Second, this the list of 30 artists that appear most often in playlists with 35,000+ followers. 
-
-
-
-```python
-popular_artists=['Post Malone', 'JAY Z', 'Lil Wayne', 'Rihanna', '21 Savage',
-       'Young Thug', 'A$AP Rocky', 'Galantis', 'Van Morrison',
-       'Chance The Rapper', 'Led Zeppelin', 'Otis Redding',
-       'Axwell /\\ Ingrosso', 'Wiz Khalifa', 'Yo Gotti', 'Ryan Adams',
-       'Miguel', 'Birdy', 'John Mayer', 'Kanye West', 'First Aid Kit',
-       'Deorro', 'Ellie Goulding', 'Radiohead', 'Commodores', 'Diddy',
-       'SZA', 'Nicki Minaj', 'SYML']
-```
+First, the top 50 artists (in terms of number of Spotify followers) were listed. Final dataframe columns list the number of times these artists appear in a playlist. Second, a list of 30 artists that appear most often in playlists with 35,000+ followers was created. 
 
 
 By looping over the playlists, the additional predictors were created as per the below.
@@ -1364,7 +1181,6 @@ artist_feature_list=[]
 
 for key, item in group_artists_by_playlist:
     
-    #add in top 30 artists
     category_artist_count=[]
     for ele in popular_artists:
         present=False
@@ -1390,10 +1206,7 @@ for key, item in group_artists_by_playlist:
     for i in range(len(popular_artists)):
         tmp.append(category_artist_count[i])
     artist_feature_list.append(tuple(tmp))
-    #artist_feature_list.append((key, followers_mean,followers_std,popularity_mean,popularity_std,\
-    #                           top_10,top_10_20,top_20_30,top_30_40,top_40_50))
-
-# Save feature names
+    
 artist_feature_names = ['followers_mean','followers_std','popularity_mean','popularity_std',
                        'top_0_10','top_10_20','top_20_30','top_30_40','top_40_50']
 for i in range(len(popular_artists)):
@@ -1550,15 +1363,6 @@ artist_main_df.head()
 </div>
 
 
-
-
-
-```python
-# Concatenate grouped artist sub dataframe and genre dataframe
-artist_sub_groups = [artist_main_df,artist_genres_df]
-artist_df_groups = pd.concat(artist_sub_groups,axis=1,join='inner')
-artist_df_groups = artist_df_groups.rename(columns={'': "'no_genre'"})
-```
 
 
 Similar to the artist feature engineering, the playlists' audio features were engineered next. Specifically, for ever audio feature mined from Spotify, the mean and standard deviation across all playlist tracks was computed.

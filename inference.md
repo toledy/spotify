@@ -1,6 +1,7 @@
 ---
-title: Best Model Inference
+title: Model Inference
 notebook: inference.ipynb
+nav_include: 5
 ---
 
 ## Contents

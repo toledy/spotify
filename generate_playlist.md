@@ -10,6 +10,7 @@ nav_include: 6
 {: toc}
 
 
+
 ## Generating Successful Playlists
 
 ### Methodology
@@ -27,8 +28,6 @@ To this extent, the fitted Gradient Boosting Regressor has been used. Specifical
 
 
 
-
-
 ### Examples
 
 For example, if you feel like listening to deep house, simply type "deep house" and the number of songs for your custom playlist. The function will return that number of songs from the most highly rated (in terms of followers) predicted playlist in Spotify.
@@ -38,9 +37,6 @@ For example, if you feel like listening to deep house, simply type "deep house" 
 ```python
 optimized_playlist("deep house",10)
 ```
-
-
-
 
 
     ['Feel Good',
@@ -79,8 +75,6 @@ optimized_playlist("Str_2000s",5)
 
 
 
-
-
     ['Dani California',
      'Mudshovel - Explicit Album Version',
      'Animal I Have Become',
@@ -108,7 +102,7 @@ The example genres showcased above are only a small sample of choices that the p
 
 **Conclusion**
 
-Spotify’s music recommendation engine is vital to the company for two primary reasons. First, Spotify's foremost revenue source is its paying customer base - being able to offer these customers good service in the form of relevant music is vital. Second, Spotify is incentivized to provide non-paying customers with relevant recommendations in the hope of converting those customers to paying ones instead. 
+Spotify’s music recommendation engine is vital to the company for two primary reasons. Firstly, Spotify's foremost revenue source is its paying customer base - being able to offer these customers good service in the form of relevant music is vital. Secondly, Spotify is incentivized to provide non-paying customers with relevant recommendations in the hope of converting those customers to paying ones instead. 
 
 With this backdrop in mind, we set out to accomplish two main tasks:
 
@@ -126,4 +120,4 @@ Finally, the optimized gradient boosted regressor was also used to generate cust
 
 **Future Work**
 
-Potential additional insights and improved model accuracy could be gained in future work by expanding the feature space to include for example non-linearities and polynomial interaction terms. Also, the playlist generation feature could be further enhanced if songs were sampled from a broader range of playlists (and not just from the predicted most succesful playlist) through the use of advanced stochastic optimization algorithms.
+Potential additional insights and improved model accuracy could be gained in future work by expanding the feature space to include for example non-linearities and polynomial interaction terms. Also, the playlist generation feature could be further enhanced if songs were sampled from a broader range of playlists (and not just from the predicted most successful playlist) through the use of advanced stochastic optimization algorithms.

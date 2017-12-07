@@ -487,10 +487,7 @@ features_df.to_csv('track_features(track_indices).csv', sep=',')
 
 ### Collect Spotify Artist Information Per Track in Playlist
 
-Following a similar procedure as the audio feature extraction, artist information for every track in every playlist was extracted next.
-
-First, a function was defined to retrieve artist information given an artist name.
-
+Following a similar procedure as the audio feature extraction, artist information for every track in every playlist was extracted next. First, a function was defined to retrieve artist information given an artist name.
 
 
 ```python
@@ -528,21 +525,7 @@ for play_index,playlist in enumerate(playlist_tracks):
 ```
 
 
-Again, a dictionary in cache memory was setup for the main artist feature extraction loop.
-
-
-
-```python
-# Create artist feature dictionary and set sleeping time thresholds
-artists = list(set([item[2] for item in artist_list]))
-
-artist_info = dict()
-limit_artist_small = 10
-limit_artist_medium = 200
-```
-
-
-Artist features were extracted using the below code - note running this code on all playlists takes a significant amount of time (measured in hours).
+Again, a dictionary in cache memory was setup for the main artist feature extraction loop. Artist features were extracted using the below code - note running this code on all playlists takes a significant amount of time (measured in hours).
 
 
 
@@ -1038,11 +1021,6 @@ artist_df = pd.concat(artist_sub_frames,axis=1,join='inner')
 Once all the genres were one-hot encoded, the dataframes were grouped by playlist to enable feature engineering.
 
 
-
-    Number of playlists:  1546
-    Number of playlists:  1465
-
-
 ### Feature Engineering
 
 #### Artist Feature Engineering
@@ -1070,11 +1048,11 @@ genre_arr = np.array(genre_list).reshape(len(artist_feature_list),len(classes))
 artist_genres_df = pd.DataFrame(genre_arr)
 artist_genres_df.columns = classes
 
-#dataframe for artist grouped by playlist
+# Dataframe for artist grouped by playlist
 artist_features_df = pd.DataFrame(artist_feature_list).set_index(0)
 artist_features_df.columns = artist_feature_names
 
-# column for number of followers
+# Column for number of followers
 artist_features_df['Playlist_Followers'] = playlist_df[['Followers']].groupby(playlist_df['ID']).first()
 artist_features_df['ID']=artist_features_df.index
 
@@ -1605,19 +1583,6 @@ Here, we further analyze the names of the playlist based on the rationale that l
 new_df = pd.merge(full_df, playlist_df[['Name', 'ID']], on='ID', how='left')
 new_df.shape
 ```
-
-
-
-
-
-    (1420, 1494)
-
-
-
-
-
-
-
 
 
 Example search for relevant sub-strings followed the following procedure:

@@ -1,5 +1,5 @@
 ---
-title: Function to return random train and test sets
+title: Baseline Models
 notebook: baseline_models.ipynb
 nav_include: 3
 ---
@@ -10,81 +10,11 @@ nav_include: 3
 {: toc}
 
 
+## Baseline Models 
 
-```python
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-import statsmodels.api as sm
-from sklearn.metrics import r2_score
-from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import Imputer
-from sklearn.linear_model import LassoCV,RidgeCV
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.preprocessing import PolynomialFeatures
-%matplotlib inline
-import warnings
-warnings.filterwarnings("ignore")
-pd.set_option('display.max_columns', 200)
-import math
-import plotly
-import plotly.plotly as py
-import plotly.graph_objs as go
-plotly.__version__
-plotly.tools.set_credentials_file(username='tingnoble', api_key='4zOe1ds7duZr15VxaRBp')
-```
+In this section, our goal is to examine the baseline performance of simple regression models on the test set. We would use these baseline test set $R^2$ score as a reference for building more complex models. The models included in this section are mostly multi-linear regression models with different subset of predictors and possible polynomial/interaction terms. PCA and Lasso/Ridge are explored here as well. 
 
-
-
-
-
-
-
-
-```python
-## train, test split##
-
-
-train_size = 0.9
-test_size = 1-train_size
-
-def data_splitter(df, train, validate=False, seed=9001):
-    
-    if validate:
-        np.random.seed(seed)
-        perm = np.random.permutation(df.index)
-        m = len(df)
-        train_end = int(train * m)
-        validate_end = int(validate * m) + train_end
-        train = df.ix[perm[:train_end]]
-        validate = df.ix[perm[train_end:validate_end]]
-        test = df.ix[perm[validate_end:]]
-        return train, validate, test
-    else:
-        np.random.seed(seed)
-        perm = np.random.permutation(df.index)
-        m = len(df)
-        train_end = int(train * m)
-        train = df.ix[perm[:train_end]]
-        test = df.ix[perm[train_end:]]
-        return train, test
-```
-
-
-
-
-
-
-
-
-
-
-## Baseline models 
-
-In this section, our goal is to examine the baseline performance of simple models on the test set. We would use these baseline test set $r^2$ score as a reference for building more complex models. The models included in this section are mostly multilinear regression models with different subset of predictors and possible polynomial/interaction terms. PCA and LASSO/RRIDGE are explored here as well. 
-
-We choose to start with linear regression because of high interpretability and low computational compexity. We can easily interpret the results of regression coeffcients in such a fashion: holding all other predictors constant, one unit increase in the specified predictor leads to a change in units indicated by the coefficent in the response variables. Linear regression also has a closed form solution for coefficients which reduces computational complexity.
+We choose to start with linear regression because of its high interpretability and low computational compexity. We can easily interpret the results of regression coeffcients by holding all other predictors constant and observing how a one unit increase in the specified predictor leads to a change in units indicated by the coefficent in the response variables. Linear regression also has a closed form solution for coefficients which reduces computational complexity and promotes efficiency.
 
 Linear regression has the following assumptions: 
 * There is a linear relationship between response variables and predictors
@@ -92,13 +22,17 @@ Linear regression has the following assumptions:
 * Residuals are normally distributed
 * Residuals has constant variance 
 
-To evaluate baseline models, we use the metric $R^2$. $R^2$ is the proportion of overall variability of Y explained by the model. We do note that $R^2$ has the tendency to overfit as it will always go up for the training set when we include more predictors.
+To evaluate baseline models, we use the metric $R^2$, which is the proportion of overall variability of $Y$ explained by the model. We do note that $R^2$ has the tendency to overfit as it will always go up for the training set when we include more predictors.
 
 ### Part (a) Multi-Linear Regression Model with All Predictors
 
-As the first step, we fit a multilinear regression with all predictors that we have. This model would not neccessarily perform well because of the sheer amount predictors (949 in total). However, we want to conduct a sanity check through this model to make sure that prediction power is reasonable.
+As the first step, we fit a multi-linear regression with all predictors that we have. This model would not neccessarily perform well because of the sheer number of predictors (949 in total). However, we want to conduct a sanity check through this model to make sure that prediction power is reasonable.
 
-The test $R^2$ score for multilinear regression model with all predictors is -2.7797. Our prediction does a worse predcition job than the mean of response varaibles. This is evidence suggesting that we are overfitting our model with too many predictors. Therefore, going forward, we would like to fit a regression model with a subset of predictors in this model.
+The test $R^2$ score for multi-linear regression model with all predictors is -2.7797. Our prediction does a worse predcition job than the mean of response varaibles. This is evidence suggesting that we are overfitting our model with too many predictors. Therefore, going forward, we would like to fit a regression model with a subset of predictors in this model.
+
+
+
+
 
 
 
@@ -124,7 +58,7 @@ The test $R^2$ score for multilinear regression model with all predictors is -2.
 
 
 
-<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~tingnoble/1.embed" height="525px" width="100%"></iframe>
+<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~tingnoble/7.embed" height="525px" width="100%"></iframe>
 
 
 
@@ -161,7 +95,7 @@ From the regression summary table, we obtain the list of significant top 30 arti
 
 
 
-<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~tingnoble/1.embed" height="525px" width="100%"></iframe>
+<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~tingnoble/9.embed" height="525px" width="100%"></iframe>
 
 
 
@@ -294,7 +228,7 @@ Therefore, a subset of genre predictors could still be important and should be c
 
 
 
-<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~tingnoble/1.embed" height="525px" width="100%"></iframe>
+<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~tingnoble/11.embed" height="525px" width="100%"></iframe>
 
 
 
@@ -347,17 +281,10 @@ We achieve a $R^2$ test score of 0.2246. However,since predictors are being rand
 
 
 
-```python
-print("After Bootstrapping for 10% of predictors, Best R2 Score (Test) = {:.4f}".format(r2_test[findLargest(r2_test)]))
-print("\n")
-print('The Associated Predictors are:{}'.format(pred[findLargest(r2_test)]))
-```
 
 
     After Bootstrapping for 10% of predictors, Best R2 Score (Test) = 0.2246
-    
-    
-    The Associated Predictors are:['acousticness_std', 'dance_mean', 'key_std', 'mode_mean', 'valence_mean', 'popularity_mean', 'popularity_std', 'top_30_40', " 'alternative roots rock'", " 'art rock'", " 'austindie'", " 'boston rock'", " 'canadian pop'", " 'catstep'", " 'ccm'", " 'celtic rock'", " 'chillhop'", " 'classic funk rock'", " 'cool jazz'", " 'deep talent show'", " 'deep tech house'", " 'detroit techno'", " 'escape room'", " 'filmi'", " 'filter house'", " 'garage rock'", " 'german indie'", " 'glitch'", " 'indie poptimism'", " 'jazz'", " 'jump blues'", " 'memphis blues'", " 'neo soul'", " 'new romantic'", " 'noise punk'", " 'ok indie'", " 'power pop'", " 'progressive house'", " 'rockabilly'", " 'soundtrack'", " 'symphonic rock'", " 'teen pop'", " 'thrash core'", " 'urban contemporary'", " 'vegan straight edge'", " 'worship'", "'alternative americana'", "'art rock'", "'aussietronica'", "'baroque'", "'bay area indie'", "'bluegrass'", "'brass band'", "'britpop'", "'bubblegum dance'", "'chamber pop'", "'compositional ambient'", "'contemporary jazz'", "'dance pop'", "'deep big room'", "'deep contemporary country'", "'deep euro house'", "'deep swedish indie pop'", "'djent'", "'freak folk'", "'halloween'", "'indie garage rock'", "'indie pop'", "'indie poptimism'", "'japanese city pop'", "'lift kit'", "'lowercase'", "'melodic metalcore'", "'post-teen pop'", "'uk drill'", "'underground hip hop'", "'vancouver indie'", "'vapor soul'", 'Yo Gotti', 'Chance The Rapper', 'Str_2000s', 'Str_1980s', 'Str_1960s']
+    The Associated Predictors are :['acousticness_std', 'dance_mean', 'key_std', 'mode_mean', 'valence_mean', 'popularity_mean', 'popularity_std', 'top_30_40', " 'alternative roots rock'", " 'art rock'", " 'austindie'", " 'boston rock'", " 'canadian pop'", " 'catstep'", " 'ccm'", " 'celtic rock'", " 'chillhop'", " 'classic funk rock'", " 'cool jazz'", " 'deep talent show'", " 'deep tech house'", " 'detroit techno'", " 'escape room'", " 'filmi'", " 'filter house'", " 'garage rock'", " 'german indie'", " 'glitch'", " 'indie poptimism'", " 'jazz'", " 'jump blues'", " 'memphis blues'", " 'neo soul'", " 'new romantic'", " 'noise punk'", " 'ok indie'", " 'power pop'", " 'progressive house'", " 'rockabilly'", " 'soundtrack'", " 'symphonic rock'", " 'teen pop'", " 'thrash core'", " 'urban contemporary'", " 'vegan straight edge'", " 'worship'", "'alternative americana'", "'art rock'", "'aussietronica'", "'baroque'", "'bay area indie'", "'bluegrass'", "'brass band'", "'britpop'", "'bubblegum dance'", "'chamber pop'", "'compositional ambient'", "'contemporary jazz'", "'dance pop'", "'deep big room'", "'deep contemporary country'", "'deep euro house'", "'deep swedish indie pop'", "'djent'", "'freak folk'", "'halloween'", "'indie garage rock'", "'indie pop'", "'indie poptimism'", "'japanese city pop'", "'lift kit'", "'lowercase'", "'melodic metalcore'", "'post-teen pop'", "'uk drill'", "'underground hip hop'", "'vancouver indie'", "'vapor soul'", 'Yo Gotti', 'Chance The Rapper', 'Str_2000s', 'Str_1980s', 'Str_1960s']
 
 
 ### Part (g) Principle Component Analysis
@@ -379,7 +306,7 @@ We acheive the best $R^2$ test score of 0.1307 with 30 PCA components. Although 
 
 
 
-![png](baseline_models_files/baseline_models_44_1.png)
+![png](baseline_models_files/baseline_models_45_1.png)
 
 
 ### Part (h) Lasso and Ridge
@@ -393,6 +320,8 @@ Ridge minimizes the following function:
 $$\sum_{i=1}^n (Y_i-\sum_{j=1}^p X_{ij}\beta_j)^2 + \lambda \sum_{j=1}^p (\beta_j)^2$$
 
 In part (h), we fit Ridge and Lasso with cross validation and with lamda ranging from 1e^-5 to 10^5.
+
+Lasso Regularization:
 
 
 
@@ -408,6 +337,8 @@ In part (h), we fit Ridge and Lasso with cross validation and with lamda ranging
         verbose=False)
 
 
+
+Ridge Regularization:
 
 
 

@@ -351,12 +351,6 @@ Ridge Regularization:
         cv=10, fit_intercept=True, gcv_mode=None, normalize=True, scoring=None,
         store_cv_values=False)
 
-
-
-
-
-
-
     With Lasso Regularization, R2 Score (Test) = 0.1094
     With Ridge Regularization, R2 Score (Test) = 0.0959
 

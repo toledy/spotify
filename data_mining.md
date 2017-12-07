@@ -326,21 +326,6 @@ playlist_tracks = dict()
 The playlists were prepped for audio feature extraction.
 
 
-
-```python
-# Collect audio features per track per playlist
-for playlist in Spotify_playlists["ID"]:
-    if Spotify_playlists.loc[Spotify_playlists['ID'] == playlist, 'No. of Tracks'].item() > 0:
-        try:
-            playlist_tracks[playlist] = get_playlist_tracks('spotify', playlist)
-            time.sleep(random.randint(1, 3))
-        except:
-            pass
-```
-
-
-
-
 ```python
 # Define an example list of songs for the first 10 playlists
 songs_playlist = []
@@ -589,21 +574,7 @@ def get_artist(name):
 ```
 
 
-The playlists were prepped for audio feature extraction.
-
-
-
-```python
-# Collect tracks per playlist
-for playlist in Spotify_playlists["ID"]:
-    if Spotify_playlists.loc[Spotify_playlists['ID'] == playlist, 'No. of Tracks'].item() > 0:
-        try:
-            playlist_tracks[playlist] = get_playlist_tracks('spotify', playlist)
-            time.sleep(random.randint(1, 3))
-        except:
-            pass
-```
-
+The playlists were prepped for artist feature extraction.
 
 
 

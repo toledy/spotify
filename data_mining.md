@@ -597,7 +597,7 @@ artist_information.head()
 
 Once all data is extracted from Spotify, the next step is to combine the separate dataframes (i.e., for playlists, audio features and artists) and to perform some initial feature engineering in the hope of creating useful data for inference and prediction of playlist success.
 
-The first step is to load all the dataframes separately.
+The first step is to load all the dataframes separately. Beginning with the playlist dataframe.
 
 
 
@@ -699,7 +699,7 @@ playlist_df.head()
 </div>
 
 
-
+Next, the track feature dataframe is loaded.
 
 
 ```python
@@ -842,7 +842,7 @@ tracks_df.head()
 </div>
 
 
-
+Finally, the artist dataframe is loaded.
 
 
 ```python
@@ -932,7 +932,7 @@ artist_df_sub.head()
 
 
 
-As we can see from the above - artists are grouped by a list of genres by Spotify. Therefore,genres are one-hot encoded in order to make these genre lists predictors that we can run models on.
+As we can see from the above - artists are categorized by a list of genres as opposed to a single genre. Therefore, genres are one-hot encoded to convert these genre lists into predictors we can run models on.
 
 
 
@@ -951,50 +951,24 @@ artist_df = pd.concat(artist_sub_frames,axis=1,join='inner')
 ```
 
 
-Once all the genres are one-hot encoded, the dataframes are grouped by playlist to enable the following feature engineering.
-
-
-
-```python
-group_artists_by_playlist = artist_df.groupby('playlist') 
-print("Number of playlists: ", len(group_artists_by_playlist))
-
-group_tracks_by_playlist = tracks_df.groupby('playlist')
-print("Number of playlists: ", len(group_tracks_by_playlist))
-```
-
-
-    Number of playlists:  1546
-    Number of playlists:  1465
+Once all the genres are one-hot encoded, the dataframes are grouped by playlist to enable feature engineering.
 
 
 ### Feature Engineering
 
+#### Artist Variables
+
 In terms of artists, feature engineering led to the following predictors:
 
-* Thirty columns represent the names of top 30 artists (in terms of appearing most often in popular playlists). They are categorical variables indicating whether a playlist has a specific artist.
-* Five columns represent the number of times top 50 artists (in terms of artist followers in aggregate) appear in the playlists (bucketed in 10 artists each)
-* Two columns represent the mean and standard deviation of artists followers per playlist
-* Two columns represent the mean and standard deviation of artists popularity per playlist
+* Thirty columns represent the names of top 30 artists (in terms of appearing most often in popular playlists). These are categorical variables indicating whether a playlist has a specific artist.
+* Five columns represent the number of times top 50 artists (in terms of artist followers) appear in the playlists (bucketed in 10 artist intervals each)
+* Two columns represent the mean and standard deviation of artist followers per playlist
+* Two columns represent the mean and standard deviation of artist popularity per playlist
 * Artist genres are one-hot encoded
 
 First, the top 50 artists (in terms of number of Spotify followers) are extracted. Then, we count the amount of times these artists show up in a given playlist and record the counts as predictors in the final dataframe.
 
 
-
-```python
-top_10_followers = list(artist_df.sort_values('followers',ascending=False)['artist'].unique()[:10])
-top_10_20_followers = list(artist_df.sort_values('followers',ascending=False)['artist'].unique()[10:20])
-top_20_30_followers = list(artist_df.sort_values('followers',ascending=False)['artist'].unique()[20:30])
-top_30_40_followers = list(artist_df.sort_values('followers',ascending=False)['artist'].unique()[30:40])
-top_40_50_followers = list(artist_df.sort_values('followers',ascending=False)['artist'].unique()[40:50])
-
-artist_df['top_0_10'] = np.where(artist_df['artist'].isin(top_10_followers), 1, 0)
-artist_df['top_10_20'] = np.where(artist_df['artist'].isin(top_10_20_followers), 1, 0)
-artist_df['top_20_30'] = np.where(artist_df['artist'].isin(top_20_30_followers), 1, 0)
-artist_df['top_30_40'] = np.where(artist_df['artist'].isin(top_30_40_followers), 1, 0)
-artist_df['top_40_50'] = np.where(artist_df['artist'].isin(top_40_50_followers), 1, 0)
-```
 
 
 Second, we obtain the list of 30 artists who appear most often in playlists with 35,000+ followers. By looping over the playlists, the additional predictors are created as below.
@@ -1003,45 +977,6 @@ Second, we obtain the list of 30 artists who appear most often in playlists with
 
 
 
-
-
-```python
-artist_feature_list=[]
-
-for key, item in group_artists_by_playlist:
-    
-    #add in top 30 artists
-    category_artist_count=[]
-    for ele in popular_artists:
-        present=False
-        for artist in item['artist']:
-            if ele==artist:
-                present=True
-        category_artist_count.append(present*1)
-    
-    followers_mean=item['followers'].mean()
-    followers_std=item['followers'].std()
-    
-    popularity_mean=item['popularity'].mean()
-    popularity_std=item['popularity'].std()
-    
-    top_10 = item['top_0_10'].sum()
-    top_10_20 = item['top_10_20'].sum()
-    top_20_30 = item['top_20_30'].sum()
-    top_30_40 = item['top_30_40'].sum()
-    top_40_50 = item['top_40_50'].sum()
-    
-    tmp=[key, followers_mean,followers_std,popularity_mean,popularity_std,\
-         top_10,top_10_20,top_20_30,top_30_40,top_40_50]
-    for i in range(len(popular_artists)):
-        tmp.append(category_artist_count[i])
-    artist_feature_list.append(tuple(tmp))
-    
-artist_feature_names = ['followers_mean','followers_std','popularity_mean','popularity_std',
-                       'top_0_10','top_10_20','top_20_30','top_30_40','top_40_50']
-for i in range(len(popular_artists)):
-        artist_feature_names.append(popular_artists[i])
-```
 
 
 All the genres in a playlist are encoded to ones in the one-hot encoded genre columns.
@@ -1198,6 +1133,7 @@ artist_df_groups = pd.concat(artist_sub_groups,axis=1,join='inner')
 artist_df_groups = artist_df_groups.rename(columns={'': "'no_genre'"})
 ```
 
+#### Audio Feature Variables
 
 Similar to the artist feature engineering, the playlists' audio features are engineered next. Specifically, for each audio feature (such as acousticness, duraition, energy) mined from Spotify, the mean and standard deviation across all playlist tracks is computed.
 

@@ -279,22 +279,6 @@ Once all the audio features are extracted, they are converted into the main audi
 
 
 
-```python
-playlist_df = pd.DataFrame(songs_playlist,columns=['playlist','song'])
-
-frame_one = [acc_df,dan_df,dur_df,ene_df,inst_df,key_df,live_df,loud_df,mode_df,spee_df,temp_df,time_df,vale_df]
-features = pd.concat(frame_one,axis=1).T.groupby(level=0).first().T
-
-frame_two = [features,playlist_df]
-features_df = pd.concat(frame_two,axis=1).T.groupby(level=0).first().T.dropna()
-
-features_df.head()
-```
-
-
-
-
-
 <div>
 <style>
     .dataframe thead tr:only-child th {
@@ -472,16 +456,6 @@ sys.stdout.write("\r%d%%" % 100)
 ```
 
 Once all the artist features are extracted, they are converted into the main artist feature dataframe and saved as a large csv file.
-
-
-```python
-frame_one = [follow_df,genres_df,popularity_df,song_df, playlist_df]
-artist_information = pd.concat(frame_one,axis=1).T.groupby(level=0).first().T
-artist_information.head()
-```
-
-
-
 
 
 <div>

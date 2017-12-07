@@ -163,34 +163,7 @@ data.head()
 
 
 
-For each playlist, the number of followers was obtained - this number will be the response variable for our regression based models.
-
-
-
-```python
-# Pull the number of followers per playlist
-playlist_follower = []
-
-# Loop over playlists and get followers
-for i in range(0, len(data['URI'])-1): 
-    
-    # If number of followers is greater than 0
-    if data['No. of Tracks'][i] > 0:
-        uri = data['URI'][i]
-        username = uri.split(':')[2]
-        playlist_id = uri.split(':')[4]
-        results = sp.user_playlist(username, playlist_id)
-        followers = results['followers']['total']
-        playlist_follower.append(followers)
-    
-    # If follower count is 0, append 0   
-    else: 
-        followers = 0
-        playlist_follower.append(followers)
-```
-
-
-Finally - the number of followers was concatenated to the playlist dataframe.
+For each playlist, the number of followers was obtained - this number will be the response variable for our regression based models. Finally - the number of followers was concatenated to the playlist dataframe.
 
 
 
@@ -313,19 +286,6 @@ def get_playlist_tracks(username, playlist_id):
 Running the feature extraction from Spotify could take a significant amount of time and could also be prone to raise errors in the process. To avoid losing information when such error occurs, a dictionary was used in cache memory.
 
 
-
-```python
-# Subsample of data to pull
-Spotify_playlists = data.iloc[0:10]
-
-# Create playlist cache in memory
-playlist_tracks = dict()
-```
-
-
-The playlists were prepped for audio feature extraction.
-
-
 ```python
 # Define an example list of songs for the first 10 playlists
 songs_playlist = []
@@ -337,24 +297,6 @@ for item,playlist in enumerate(playlist_tracks):
         
 print("Number of Songs in Playlists: {}".format(len(songs_playlist)))
 ```
-
-
-    Number of Songs in Playlists: 663
-
-
-Again, a dictionary in cache memory was setup for the main audio feature extraction loop.
-
-
-
-```python
-# Create audio feature dictionary and set sleeping time thresholds
-songs = [item[1] for item in songs_playlist]
-
-audio_feat = dict()
-limit_songs_small = 10
-limit_songs_medium = 200
-```
-
 
 Audio features were extracted using the below code - note running this code on all playlists takes a significant amount of time (measured in hours).
 
@@ -548,17 +490,6 @@ features_df.to_csv('track_features(track_indices).csv', sep=',')
 Following a similar procedure as the audio feature extraction, artist information for every track in every playlist was extracted next.
 
 First, a function was defined to retrieve artist information given an artist name.
-
-
-
-```python
-# Subsample of data to pull
-Spotify_playlists = data.iloc[0:10]
-
-# Collect artist information per track found in Step II
-playlist_tracks = dict()
-```
-
 
 
 
@@ -1907,4 +1838,4 @@ full_df_concise[interaction_columns].describe()
 
 
 
-The final dataframe has been created, and the next step is to model with the features created. 
+With this step, the final dataframe has been created.

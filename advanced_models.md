@@ -1,6 +1,6 @@
 ---
-title: Ensemble Models
-notebook: ensemble_models.ipynb
+title: Advanced Models
+notebook: advanced_models.ipynb
 nav_include: 4
 ---
 
@@ -9,10 +9,9 @@ nav_include: 4
 *  
 {: toc}
 
+**Strategy of Fitting Advanced Models**<br/> 
 
-## Strategy of Fitting Ensemble Models:
-
-1) **Data Pre-Processing**: after reading the dataframe, we first split the training/test data by (90%-10% split) due to the small size of the dataset, then standardize the numerical columns before fitting the models, and finally checking for any missing data and impute accordingly. 
+1) **Data Pre-Processing**: After reading in the dataframe, we first split the training/test data by (90%-10% split) due to the small size of the dataset. Then,we standardize the numerical columns, and finally we check for any missing data and imput accordingly. 
 
 2) **Model Score Function**: for the simplicity of model summary, we will create a model scoring function encompassing the following 6 metrics <br/> 
 - $R^2$ (R Squared)
@@ -22,7 +21,7 @@ nav_include: 4
 - $MSLE$ (Mean Squared Log Error)
 - $MEAE$ (Median Absolute Error)
 
-3) **Model Fitting**: here, we will fit 9 different ensemble regressors on the training data and then predict using the test data
+3) **Model Fitting**: Here, we will fit 9 different advanced regressors on the training data and then predict using the test data
 - Gradient Boosting Regressor
 - Random Forest Regressor
 - Huber Regressor
@@ -33,11 +32,9 @@ nav_include: 4
 - Bagging Regressor
 - Extra Trees Regressor
 
-4) **Model Summary**: after fitting all the models, we will present 3 summary tables based on training score, test score and qualitative metrics for the models
+4) **Model Summary**: After fitting all the models, we will present 3 summary tables based on training score, test score and qualitative metrics for the models
 
-5) **Cross Validation**: based on the summary, we will further fine-tune the parameters on the best model by cross validation
-
-
+5) **Cross Validation**: Based on the summary, we will further fine-tune the parameters on the best model using cross validation
 
 
 
@@ -49,7 +46,9 @@ nav_include: 4
 
 
 
-## Section 1. Data Pre-Processing
+
+
+## Data Pre-Processing
 
 After reading in the dataframe, we will pre-process the data in four steps: 
 - A training/test split is constructed where **90%** of the subsample is the **training** data and **10%** is the **test** data
@@ -77,45 +76,6 @@ After reading in the dataframe, we will pre-process the data in four steps:
 
 
 
-    Train Size: (1278, 949)
-    Test Size: (142, 949)
-
-
-
-
-
-
-
-
-
-
-
-
-
-    ['acousticness_std',
-     'dance_std',
-     'energy_std',
-     'instrumentalness_std',
-     'key_std',
-     'liveness_std',
-     'loudness_std',
-     'mode_std',
-     'speech_std',
-     'tempo_std',
-     'time_std',
-     'valence_std',
-     'followers_std',
-     'popularity_std',
-     'hip hop_acousticness_std',
-     'pop_liveness_std',
-     'dance_liveness_std',
-     'r&b_acousticness_std',
-     'rap_energy_std',
-     'rap_key_std',
-     'acoustic_acousticness_std',
-     'acoustic_energy_std',
-     'acoustic_key_std',
-     'soul_acousticness_std']
 
 
 
@@ -159,11 +119,16 @@ After reading in the dataframe, we will pre-process the data in four steps:
 
 
 
-## Section 2. Model Score Function
+
+
+
+
+
+## Model Score Function
 
 Here, we choose 6 metrics to evaluate our models: 
 
-1) **$R^2$ - R Squared** = measures how well future datasets are likely to be predicted by the model. The score ranges from negative (because the model can be arbitrarily worse) to a best possible value of 1.0. Usually, the bigger the $R^2$, the better the model. Yet we do acknowledge the tedency of over-fitting with $R^2$ as with more predictors, it will only remain constant or increase.
+1) **$R^2$ - R Squared** = measures how well future datasets are likely to be predicted by the model. The score ranges from negative (because the model can be arbitrarily worse) to a best possible value of 1.0. Usually, the bigger the $R^2$, the better the model. Yet we do acknowledge the tedency of over-fitting with $R^2$ as with more predictors, it will only remain constant or increase for the training set.
 
 $$R^2(y, \hat{y}) = 1 - \frac{\sum_{i=0}^{n-1}(y_i-\hat{y}_i)^2)}{\sum_{i=0}^{n-1}(y_i-\bar{y})^2}, n = \text{sample size}$$
 
@@ -192,12 +157,11 @@ $$MSLE(y, \hat{y}) = \frac{1}{n} \sum_{i=0}^{n-1} [\ln(1+y_i)-\ln(1+\hat{y}_i)]^
 
 $$MEAE(y, \hat{y}) = \text{median}(|y_1-\hat{y}_1|, \cdots, |y_n-\hat{y}_n|)$$
 
-The key metrics given the parameters of our pre-processing are 1) $R^2$ and 5) $MSLE$, which will be the most important basis of comparison for the 9 ensemble models.
+The key metrics given the parameters of our pre-processing are 1) $R^2$ and 5) $MSLE$, which will be the most important basis of comparison for the 9 advanced models.
 
 
 
 ```python
-# Define score for regression model
 def expected_score1(model, x, y):
     R2 = 0
     EVar = 0
@@ -231,13 +195,13 @@ score = lambda model, x, y: pd.Series([model.score(x, y),
 ```
 
 
-## Section 3. Model Fitting
+## Model Fitting
 
-### Section 3.1 Gradient Boosting Regressor
+### Gradient Boosting Regressor
 
 According to Ben Gorman, if Linear Regression were a Toyota Camry, the Gradient Boosting Regressor would easily be a UH-60 Blackhawk Helicopter.
 
-Gradient Boosting Regressor is an ensemble machine learning procedure that fits new models consecutively to provide a more reliable estimate of the response variable. It constructs new base-learners to be correlated with the negative gradient of the loss function: 1) least square regression (ls), 2) least absolute deviation (lad), 3) huber (a combination of ls and lad), 4) quantile - which allows for quantile regression. The choice of the loss function allows for great flexibility in Gradient Boosting and the best error function is huber for our model based on trial and error / cross-validation. 
+Gradient Boosting Regressor is an ensemble machine learning procedure that fits new models consecutively to provide a more reliable estimate of the response variable. It constructs new base-learners to be correlated with the negative gradient of the loss function: 1) least square regression (ls), 2) least absolute deviation (lad), 3) huber (a combination of ls and lad), 4) quantile - which allows for quantile regression. The choice of the loss function allows for great flexibility in Gradient Boosting.The best error function is huber for our model based on trial and error / cross-validation. 
 
 The principle behind this procedure is to adopt a slow learning approach where we fit a regression tree to the residuals from the model rather than the actual response variable. We then add this new regression tree to update the residuals. The base learner here could be small regression trees and we slowly improve them in areas that they do not perform well. 
 
@@ -290,88 +254,6 @@ $$\hat{f}(x) = \sum_{b=1}^b \lambda \hat{f}_b(x) $$
 
 
 
-    Gradient Boosting Feature Importance:
-
-
-
-
-
-<div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>features</th>
-      <th>importances</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>22</th>
-      <td>valence_mean</td>
-      <td>0.045590</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>dance_mean</td>
-      <td>0.035858</td>
-    </tr>
-    <tr>
-      <th>27</th>
-      <td>popularity_std</td>
-      <td>0.034743</td>
-    </tr>
-    <tr>
-      <th>17</th>
-      <td>speech_std</td>
-      <td>0.028664</td>
-    </tr>
-    <tr>
-      <th>938</th>
-      <td>pop_liveness_std</td>
-      <td>0.028426</td>
-    </tr>
-    <tr>
-      <th>14</th>
-      <td>mode_mean</td>
-      <td>0.027019</td>
-    </tr>
-    <tr>
-      <th>931</th>
-      <td>Str_2000s</td>
-      <td>0.026230</td>
-    </tr>
-    <tr>
-      <th>23</th>
-      <td>valence_std</td>
-      <td>0.026000</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>liveness_mean</td>
-      <td>0.025671</td>
-    </tr>
-    <tr>
-      <th>13</th>
-      <td>loudness_std</td>
-      <td>0.024740</td>
-    </tr>
-  </tbody>
-</table>
-</div>
 
 
 
@@ -383,15 +265,15 @@ $$\hat{f}(x) = \sum_{b=1}^b \lambda \hat{f}_b(x) $$
 
 
 
+<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~tingnoble/19.embed" height="525px" width="100%"></iframe>
 
-![png](ensemble_models_files/ensemble_models_34_0.png)
 
 
-### Section 3.2 Random Forest Regressor
+### Random Forest Regressor
 
-Random Forest Regressor is another commonly used machine learning method that incorporates different regression trees. We bootstrap the training samples, which are used to build an ensemble of full regression trees. Each time a split in a tree is considered, we randomly select a subset of predictors (typically set as 'sqrt' which means we take $m = \sqrt{p}$ of the full set of $p$ predictors. Finally, we average the predictors. This is an improvement to bagging (which takes the full set of predictors $m=p$) because by allowing only a random subset of predictors, Random Forest effectively decorrelates the regression trees. 
+Random Forest Regressor is another commonly used machine learning method that incorporates different regression trees. We bootstrap the training samples, which are used to build an ensemble of full regression trees. Each time a split in a tree is considered, we randomly select a subset of predictors (typically set as $m = \sqrt{p}$ of the full set of $p$ predictors. Finally, we average the predictors. This is an improvement to bagging (which takes the full set of predictors $m=p$) because by allowing only a random subset of predictors, Random Forest effectively decorrelates the regression trees. 
 
-In comparsion to Boosting where weak learners (high bias, low variance) are used as base learners, which are then modelled sequentially to minimize bias, Random Forest models fully grown decision trees (low bias, high variance) in parallel and aims to reduce variance. In this way, Random Forest effectively limits the chances of over-fitting whereas boosting sometimes does overfit.
+In comparison to Boosting in which weak learners (high bias, low variance) are used as base learners, which are then modelled sequentially to minimize bias, Random Forest models fully grown decision trees (low bias, high variance) in parallel and aims to reduce variance. In this way, Random Forest effectively limits the chances of over-fitting whereas boosting sometimes does overfit.
 
 
 
@@ -421,88 +303,6 @@ In comparsion to Boosting where weak learners (high bias, low variance) are used
 
 
 
-    Random Forest Feature Importance:
-
-
-
-
-
-<div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>features</th>
-      <th>importances</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>22</th>
-      <td>valence_mean</td>
-      <td>0.063908</td>
-    </tr>
-    <tr>
-      <th>931</th>
-      <td>Str_2000s</td>
-      <td>0.043435</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>dance_mean</td>
-      <td>0.034744</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>liveness_mean</td>
-      <td>0.032225</td>
-    </tr>
-    <tr>
-      <th>17</th>
-      <td>speech_std</td>
-      <td>0.029070</td>
-    </tr>
-    <tr>
-      <th>27</th>
-      <td>popularity_std</td>
-      <td>0.026800</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>acousticness_std</td>
-      <td>0.022987</td>
-    </tr>
-    <tr>
-      <th>26</th>
-      <td>popularity_mean</td>
-      <td>0.021267</td>
-    </tr>
-    <tr>
-      <th>23</th>
-      <td>valence_std</td>
-      <td>0.020011</td>
-    </tr>
-    <tr>
-      <th>18</th>
-      <td>tempo_mean</td>
-      <td>0.019738</td>
-    </tr>
-  </tbody>
-</table>
-</div>
 
 
 
@@ -510,11 +310,11 @@ In comparsion to Boosting where weak learners (high bias, low variance) are used
 
 
 
+<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~tingnoble/23.embed" height="525px" width="100%"></iframe>
 
-![png](ensemble_models_files/ensemble_models_41_0.png)
 
 
-### Section 3.3 Huber Regressor
+### Huber Regressor
 
 
 
@@ -536,7 +336,7 @@ In comparsion to Boosting where weak learners (high bias, low variance) are used
 
 
 
-### Section 3.4 Elastic Net
+### Elastic Net
 
 
 
@@ -559,7 +359,7 @@ In comparsion to Boosting where weak learners (high bias, low variance) are used
 
 
 
-### Section 3.5 SVR
+### SVR
 
 
 
@@ -581,7 +381,7 @@ In comparsion to Boosting where weak learners (high bias, low variance) are used
 
 
 
-### Section 3.6 Neural Network
+### Neural Network
 
 
 
@@ -608,7 +408,7 @@ In comparsion to Boosting where weak learners (high bias, low variance) are used
 
 
 
-### Section 3.7 Adaboost Regressor
+### Adaboost Regressor
 
 
 
@@ -646,88 +446,6 @@ In comparsion to Boosting where weak learners (high bias, low variance) are used
 
 
 
-    Adaboost Regressor Feature Importance:
-
-
-
-
-
-<div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>features</th>
-      <th>importances</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>22</th>
-      <td>valence_mean</td>
-      <td>0.076019</td>
-    </tr>
-    <tr>
-      <th>931</th>
-      <td>Str_2000s</td>
-      <td>0.073634</td>
-    </tr>
-    <tr>
-      <th>17</th>
-      <td>speech_std</td>
-      <td>0.043155</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>liveness_mean</td>
-      <td>0.041347</td>
-    </tr>
-    <tr>
-      <th>930</th>
-      <td>Str_Acoustic</td>
-      <td>0.034172</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>dance_mean</td>
-      <td>0.032189</td>
-    </tr>
-    <tr>
-      <th>27</th>
-      <td>popularity_std</td>
-      <td>0.030544</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>acousticness_std</td>
-      <td>0.029788</td>
-    </tr>
-    <tr>
-      <th>26</th>
-      <td>popularity_mean</td>
-      <td>0.029047</td>
-    </tr>
-    <tr>
-      <th>13</th>
-      <td>loudness_std</td>
-      <td>0.021482</td>
-    </tr>
-  </tbody>
-</table>
-</div>
 
 
 
@@ -735,11 +453,11 @@ In comparsion to Boosting where weak learners (high bias, low variance) are used
 
 
 
+<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~tingnoble/35.embed" height="525px" width="100%"></iframe>
 
-![png](ensemble_models_files/ensemble_models_64_0.png)
 
 
-### Section 3.8 Bagging Regressor
+### Bagging Regressor
 
 
 
@@ -770,7 +488,7 @@ In comparsion to Boosting where weak learners (high bias, low variance) are used
 
 
 
-### Section 3.9 Extra Trees Regressor
+### Extra Trees Regressor
 
 
 
@@ -796,14 +514,14 @@ In comparsion to Boosting where weak learners (high bias, low variance) are used
 
 
 
-## Section 4. Model Summary
+## Model Summary
 
-### Section 4.1 Training Data
+### Training Data
 
 **Insights**
-- Based on the training data summary, **9.Extra Trees Regressor** best explains training data, followed by **2. Random Forest Regressor**, and **1. Gradient Boosting Regressor**
+- Based on the training data summary, **Extra Trees Regressor** best explains training data, followed by **Random Forest Regressor**, and **Gradient Boosting Regressor**
 - However, we need to bear in mind that too-good a fit on the training data suggests over-fitting - that is, the model has high variance and does not generalize the trends well (because fitted too well to the noise). This is unsurprising as just like classification trees, regression trees have the tendency to over-fit
-- We could also easily eliminate **3. Huber Regressor**, **6. Neural Network** because of their terrible performance on the training data and they might not be a good fit for the Spotify data
+- We could also easily eliminate **Huber Regressor**, **Neural Network** because of their terrible performance on the training data and they might not be a good fit for the Spotify data
 
 
 
@@ -1053,16 +771,16 @@ In comparsion to Boosting where weak learners (high bias, low variance) are used
 
 
 
-### Section 4.2 Test Data
+### Test Data
 
 **Insights**
-- In terms of the test data, the top 3 performers are **1. Gradient Boosting Regressor**, **2. Random Forest Regressor**, and **7. Adaboost Regressor** if we focus on $R^2$ and $MSLE$
+- In terms of the test data, the top 3 performers are **Gradient Boosting Regressor**, **Random Forest Regressor**, and **Adaboost Regressor** if we focus on $R^2$ and $MSLE$
 
-- The parameters in the aforementioned top 2 ensemble methods (as both are over 0.30 for $R^2$, leading the Adaboost Regressor by a margin) could be further fine-tuned to enhance their performance in the cross-validation section
+- The parameters in the **Gradient Boosting Regressor** could be further fine-tuned to enhance its performance in the cross-validation section
 
 - Our results closely resemble the empirical results by Rich Caruana and Alexandru Niculescu-Mizil's analysis in ***An Empirical Comparison of Supervised Learning Algorithms Using Different Performance Metrics (2005)*** which concluded that boosted trees were the best learning algorithm, closely followed by Random Forest
 
-- While we do note that **1. Gradient Boosting Regressor** has a superior performance by 3% absolute points higher than **2. Random Forest Regressor**, we also need to acknowledge the apparent advantages of using the **2. Random Forest Regressor** as it naturally handles categorical predictor variables, it is relatively quick to fit even for larger datasets, we don't have to assume anything about the underlying population distribution, it fits non-linear interactions well, it also selects variables automatically. And most importantly, Random Forest has only one hyper-parameter that we need to set - the number of features to select at each node, compared to Gradient Boosting which has several hyperparameters that we need to fine-tune in cross-validation. 
+- While we do note that **Gradient Boosting Regressor** has superior performance by 3% absolute points higher than **Random Forest Regressor**, we also need to acknowledge the apparent advantages of using the **Random Forest Regressor** as it naturally handles categorical predictor variables, it is relatively time efficient even for larger datasets, we don't have to assume anything about the underlying population distribution, it fits non-linear interactions well, it also selects variables automatically. And most importantly, Random Forest has only one hyper-parameter that we need to set - the number of features to select at each node, compared to Gradient Boosting which has several hyperparameters that we need to fine-tune in cross-validation. 
 
 
 
@@ -1312,16 +1030,9 @@ In comparsion to Boosting where weak learners (high bias, low variance) are used
 
 
 
+## Cross Validation
 
-
-```python
-# Test Summary (Qualitative Metrics)
-```
-
-
-## Section 5. Cross Validation
-
-In the last section we will assess the accuracy (bias) and precision (residual error) of the **1. Gradient Boosting Regressor** and the **2. Random Forest Regressor**. The idea of cross validation is that we divide our training dataset into 5 random parts, the training set (4 parts) is used to estimate the model, the validation set (1 part) is used to check the predictive capability and refine the model. The test set is only used once to estimate the model's true error. In this way, we can fine-tune our ensemble models' parameters to ensure a more statistically robust model. 
+In the last section we will assess the accuracy (bias) and precision (residual error) of the **1. Gradient Boosting Regressor**. The idea of cross validation is that we divide our training dataset into 5 random parts, the training set (4 parts) is used to estimate the model, the validation set (1 part) is used to check the predictive capability and refine the model. The test set is only used once to estimate the model's true error. In this way, we can fine-tune our ensemble models' parameters to ensure a more statistically robust model. 
 
 
 
@@ -1338,7 +1049,6 @@ grid = {'max_depth': [5, 10],
 
 
 ```python
-# Create a classifier object with the classifier and parameter candidates
 clf = GridSearchCV(estimator=GradientBoostingRegressor(), param_grid=grid, n_jobs=-1, cv=5)
 clf.fit(x_train, y_train)
 ```
@@ -1360,6 +1070,8 @@ clf.fit(x_train, y_train)
            pre_dispatch='2*n_jobs', refit=True, scoring=None, verbose=0)
 
 
+
+Cross-Validated Model
 
 
 
@@ -1393,12 +1105,4 @@ clf_test
     learning rate: 0.0
     alpha: 1.0
     max_features: auto
-
-
-
-
-
-
-
-
 

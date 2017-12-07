@@ -24,7 +24,7 @@ Linear regression has the following assumptions:
 
 To evaluate baseline models, we use the metric $R^2$, which is the proportion of overall variability of $Y$ explained by the model. We do note that $R^2$ has the tendency to overfit as it will always go up for the training set when we include more predictors.
 
-### Part (a) Multi-Linear Regression Model with All Predictors
+### Multi-Linear Regression Model with All Predictors
 
 As the first step, we fit a multi-linear regression with all predictors that we have. This model would not neccessarily perform well because of the sheer number of predictors (949 in total). However, we want to conduct a sanity check through this model to make sure that prediction power is reasonable.
 
@@ -62,11 +62,11 @@ The test $R^2$ score for multi-linear regression model with all predictors is -2
 
 
 
-###  Part (b) Multi-Linear Regression Model with Top Artists Predictors
+###  Multi-Linear Regression Model with Top Artists Predictors
 
-In our prelimnary EDA anlaysis, we believe that top artists would be a good predictor for the success of a playlist. Therefore, here, we fit two models in part (b) and (c) that only include predictors related artists. In part (b), we use the dummy variables of top 30 artists as predictors. As a note, for part (b), top artist are those who appear most often in playlists with 350,000+ followers. With more than 350,000 followers, a playlist will beat 80% of playlists in terms of followers. 
+In our prelimnary EDA anlaysis, we believe that top artists would be a good predictor for the success of a playlist. Therefore, here, we fit a model that only includes predictors related to artists. Specifically, we use the one-hot encoded variables of the top 30 artists as predictors. As a note, top artist are those who appear most often in playlists with 350,000+ followers. With more than 350,000 followers, a playlist will beat 80% of playlists in terms of followers. 
 
-Our regression generates a test $R^2$ score of 0.0174, which is much better than -2.7797 in part (a). Therefore, there is good reason to consider these predictors in future model estimation.
+Our regression generates a test $R^2$ score of 0.0174, which is much better than -2.7797 when using all predictors. Therefore, there is good reason to consider these predictors in future model estimation.
 
 From the regression summary table, we obtain the list of significant top 30 artist predictors:
 * 'Galantis', 'Post Malone', 'Yo Gotti', 'Ellie Goulding'
@@ -99,11 +99,11 @@ From the regression summary table, we obtain the list of significant top 30 arti
 
 
 
-###  Part (c) Multi-Linear Regression Model with Top Artists Counts Predictors
+###  Multi-Linear Regression Model with Top Artists Counts Predictors
 
-We continue to evaluate artist predictors in part (c). Here, top artists are defined differently from part (b).We first sum up the total number of followers for playlists that include an artist. Then, we rank the artists basing on the aggregated playlist followers. For part (c), the predictors are the number of top 10/10-20/20-30/30-40/40-50 artists that a playlist has.
+Next, we continue to evaluate artist predictors. Here, top artists are defined differently from above. Specifically, we first sum up the total number of followers for playlists that include an artist. Then, we rank the artists based on the aggregated playlist followers. The predictors are then the number of top 10/10-20/20-30/30-40/40-50 artists that a playlist has.
 
-From the regression result, we observe that $R^2$ training result is 0.0126 and the test result is -0.0312. The significant predictors includes only "top_30_40". It seems that part (c) $R^2$ test score are lower than that in part (b), indicating that part (b) artist predictors has more power in predicting playlist followers than predictors in part (c).
+From the regression result, we observe that $R^2$ training result is 0.0126 and the test result is -0.0312. The significant predictors includes only "top_30_40". It seems that the $R^2$ test score are lower than when using the one-hot encoded artist columns instead. This highlights the potential preference to use one-hot encoded artist variables going forward.
 
 
 
@@ -191,7 +191,7 @@ From the regression result, we observe that $R^2$ training result is 0.0126 and 
 
 
 
-###  Part (d) Multi-Linear Regression Model with Genre Predictors
+###  Multi-Linear Regression Model with Genre Predictors
 
 In our prelimnary EDA anlaysis, we also believe that genres would be a good predictor for playlist followers. Therefore, we fit a regression model with only genre predictors. Here，each predictors is a categorical variable indicating whether the playlist belongs to a specified genre.
 
@@ -246,9 +246,9 @@ Therefore, a subset of genre predictors could still be important and should be c
     Number of Genre Predictors = 54
 
 
-### Part (e) Multi-Linear Regression with Signifcant Predictors from part (a)
+### Multi-Linear Regression with Solely Significant Predictors
 
-Previously in part (a), our model includes all predictors and thus tend towards overfitting. In part (e), we fit a model with siginificant predictors from model in part (a) to reduce overfitting. We have a total of 49 predictors (cut down from 949 originally).
+Initially, our model included all predictors and thus tends towards overfitting. Here, we fit a model with solely significant predictors (out of all predictors) in the aim to reduce overfitting. We have a total of 49 predictors (cut down from 949 originally).
 
 Test $R^2$ score goes up to 0.0826, which is the best $R^2$ score we have achieved so far. This indicates that our previous model indeed suffers from overfitting.
 
@@ -260,16 +260,16 @@ Test $R^2$ score goes up to 0.0826, which is the best $R^2$ score we have achiev
 
 
 
-    For Multi-Linear Regression with Significant Predictors from part (a):
+    For Multi-Linear Regression with Solely Significant Predictors:
     R2 Score (Training) = 0.2229
     R2 Score (Test) = 0.0826
 
 
-### Part (f) Bootstrapping for 10% Predictors
+### Bootstrapping for 10% Predictors
 
-From previous parts, we observe that a smaller subset of original predictors may perform better in terms of test set prediction. Therefore, in part (f), we randomly choose 10% of predictors and fit a regression model. We do 500 iterations and record the corresponding $R^2$ test score and the associated predictors.
+From previous parts, we observe that a smaller subset of original predictors may perform better in terms of test set prediction. Therefore, below, we randomly choose 10% of predictors and fit a regression model. We do 500 iterations and record the corresponding $R^2$ test score and the associated predictors.
 
-We achieve a $R^2$ test score of 0.2246. However,since predictors are being randomly chosen, this result could come from chance alone and may not be very robust.
+We achieve a $R^2$ test score of 0.2246. However, since predictors are being randomly chosen, this result could come from chance alone and may not be very robust.
 
 
 
@@ -287,9 +287,9 @@ We achieve a $R^2$ test score of 0.2246. However,since predictors are being rand
     The Associated Predictors are :['acousticness_std', 'dance_mean', 'key_std', 'mode_mean', 'valence_mean', 'popularity_mean', 'popularity_std', 'top_30_40', " 'alternative roots rock'", " 'art rock'", " 'austindie'", " 'boston rock'", " 'canadian pop'", " 'catstep'", " 'ccm'", " 'celtic rock'", " 'chillhop'", " 'classic funk rock'", " 'cool jazz'", " 'deep talent show'", " 'deep tech house'", " 'detroit techno'", " 'escape room'", " 'filmi'", " 'filter house'", " 'garage rock'", " 'german indie'", " 'glitch'", " 'indie poptimism'", " 'jazz'", " 'jump blues'", " 'memphis blues'", " 'neo soul'", " 'new romantic'", " 'noise punk'", " 'ok indie'", " 'power pop'", " 'progressive house'", " 'rockabilly'", " 'soundtrack'", " 'symphonic rock'", " 'teen pop'", " 'thrash core'", " 'urban contemporary'", " 'vegan straight edge'", " 'worship'", "'alternative americana'", "'art rock'", "'aussietronica'", "'baroque'", "'bay area indie'", "'bluegrass'", "'brass band'", "'britpop'", "'bubblegum dance'", "'chamber pop'", "'compositional ambient'", "'contemporary jazz'", "'dance pop'", "'deep big room'", "'deep contemporary country'", "'deep euro house'", "'deep swedish indie pop'", "'djent'", "'freak folk'", "'halloween'", "'indie garage rock'", "'indie pop'", "'indie poptimism'", "'japanese city pop'", "'lift kit'", "'lowercase'", "'melodic metalcore'", "'post-teen pop'", "'uk drill'", "'underground hip hop'", "'vancouver indie'", "'vapor soul'", 'Yo Gotti', 'Chance The Rapper', 'Str_2000s', 'Str_1980s', 'Str_1960s']
 
 
-### Part (g) Principle Component Analysis
+### Principle Component Analysis
 
-Principle Component Analysis (PCA) is another way to reduce the number of predictors. Each component is a linear combination of all 949 orginal predictors. The components are ordered in such a way so that the amount of captured observed variance descreases. In part (g), linear regression is performed on the principal components of the PCA transformation. We attempt different numbers of PCA components from 1 to 100 and choose the optimal number of PCA components according to test $R^2$ score. 
+Principle Component Analysis (PCA) is another way to reduce the number of predictors. Each component is a linear combination of all 949 orginal predictors. The components are ordered in such a way so that the amount of captured observed variance descreases. Linear regression is performed on the principal components of the PCA transformation. We attempt different numbers of PCA components from 1 to 100 and choose the optimal number of PCA components according to test $R^2$ score. 
 
 We acheive the best $R^2$ test score of 0.1307 with 30 PCA components. Although we gain a higher test $R^2$ score and also have less predictors, we lose interpretability. We cannot pinpoint how a change in one predictor will change the response varibable because each component is a linear combination of all original columns.
 
@@ -309,9 +309,9 @@ We acheive the best $R^2$ test score of 0.1307 with 30 PCA components. Although 
 ![png](baseline_models_files/baseline_models_45_1.png)
 
 
-### Part (h) Lasso and Ridge
+### Lasso and Ridge
 
-Lasso and Ridge regularizations are also methods to penalize overly complex models. To penalize coefficients that have large magnitudes, Lasso and ridge include the magnitude of the cofficients in the loss functions. Specifically, Lasso minimizes the following function:
+Lasso and Ridge regularizations are also methods to penalize overly complex models. To penalize coefficients that have large magnitudes, Lasso and ridge include the magnitude of the coefficients in the loss functions. Specifically, Lasso minimizes the following function:
 
 $$\sum_{i=1}^n (Y_i-\sum_{j=1}^p X_{ij}\beta_j)^2 + \lambda \sum_{j=1}^p |\beta_j|$$
 
@@ -319,7 +319,7 @@ Ridge minimizes the following function:
 
 $$\sum_{i=1}^n (Y_i-\sum_{j=1}^p X_{ij}\beta_j)^2 + \lambda \sum_{j=1}^p (\beta_j)^2$$
 
-In part (h), we fit Ridge and Lasso with cross validation and with lamda ranging from 1e^-5 to 10^5.
+We fit Ridge and Lasso with cross validation and with lambda ranging from 1e^-5 to 10^5.
 
 Lasso Regularization:
 

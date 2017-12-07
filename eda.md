@@ -138,237 +138,11 @@ Genre features describe the genres of songs in the playlist. The following bar c
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-```python
-color_bars = ["#000000", '#062d14',"#0c5a27","#12873b","#18b44f","#1ed760","4be782",
-              "#78eda1","#a5f3c0","#d2f9e0","#a5f3c0","#78eda1", "4be782", "#1ed760",
-             "#18b44f","#12873b","#0c5a27", '#062d14',"#0c5a27","#12873b","#18b44f",
-             "#1ed760","4be782","#78eda1","#a5f3c0","#d2f9e0","#a5f3c0","#78eda1"]
-trace0 = go.Bar(
-    x=genres_counts_sub.index.tolist(),
-    y=genres_counts_sub['Mean_Follow'],
-    text= ["Number of Tracks: " + str(x) for x in genres_counts_sub['Num_tracks']],
-    marker=dict(
-        color=color_bars,
-        line=dict(
-            color='#000000',
-            width=1.5,
-        )
-    ),
-    opacity=0.6
-)
-
-data1 = [trace0]
-layout = go.Layout(
-    title='Mean Followers of Common Genres',
-)
-
-fig = go.Figure(data=data1, layout=layout)
-py.iplot(fig, filename='eda3')
-```
-
-
-
-
-
 <iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~tingnoble/17.embed" height="525px" width="100%"></iframe>
 
 
 
-
-
-```python
-worst_5 = genres_counts_sub2[len(genres_counts_sub2)-5:len(genres_counts_sub2)]
-best_5 = genres_counts_sub2[:5]
-
-worst_5_dict = dict()
-for i in worst_5.index:
-    idx = train_df[train_df[i]==1]
-    worst_5_dict[i] =  np.log(idx['Followers'])
-
-best_5_dict = dict()
-for i in best_5.index:
-    idx = train_df[train_df[i]==1]
-    best_5_dict[i] =  np.log(idx['Followers'])
-
-worst_5 = [x for x in worst_5_dict.keys()]
-best_5 = [x for x in best_5_dict.keys()]
-```
-
-
 The following interactive histogram allows you to view different distributions of log Followers for different genres. The button on the left is for unpopular genres, while the button on the right is for popular genres. We can see that distributions are generally all left skewed. We also see that certain genres have many tracks (counts are high), but the number of followers per track may not be high, affecting their mean followers. We see a distinction between popularity and commonality/frequency of appearance of different genres. 
-
-
-
-```python
-import plotly.plotly as py
-import plotly.graph_objs as go
-
-import numpy as np
-
-best1 = go.Histogram(
-    x=best_5_dict[best_5[0]],
-    name='popular:'+ best_5[0],
-    opacity=0.4,
-    marker = dict(color = '#062d14')
-)
-best2 = go.Histogram(
-    x=best_5_dict[best_5[1]],
-    name='popular: '+ best_5[1],
-    opacity=0.4,
-    marker = dict(color = '#062d14')
-)
-best3 = go.Histogram(
-    x=best_5_dict[best_5[2]],
-    name='popular:'+ best_5[2],
-    marker = dict(color = '#062d14'),
-    opacity=0.4
-)
-best4 = go.Histogram(
-    x=best_5_dict[best_5[3]],
-    name='popular:' + best_5[3],
-    marker = dict(color = '#062d14'),
-    opacity=0.4
-)
-best5 = go.Histogram(
-    x=best_5_dict[best_5[4]],
-    name='popular: '+ best_5[4],
-    marker = dict(color = '#062d14'),
-    opacity=0.4
-)
-worst1 = go.Histogram(
-    x=worst_5_dict[worst_5[0]],
-    name='unpopular: ' + worst_5[0],
-    marker = dict(color = '#78eda1'),
-    opacity=0.4
-)
-worst2 = go.Histogram(
-    x=worst_5_dict[worst_5[1]],
-    name='unpopular: ' + worst_5[1],
-    marker = dict(color = '#78eda1'),
-    opacity=0.4
-)
-worst3 = go.Histogram(
-    x=worst_5_dict[worst_5[2]],
-    name='unpopular: ' + worst_5[2],
-    marker = dict(color = '#78eda1'),
-    opacity=0.4
-)
-worst4 = go.Histogram(
-    x=worst_5_dict[worst_5[3]],
-    name='unpopular: ' + worst_5[3],
-    marker = dict(color = '#78eda1'),
-    opacity=0.4
-)
-worst5 = go.Histogram(
-    x=worst_5_dict[worst_5[4]],
-    name='unpopular: ' + worst_5[4],
-    marker = dict(color = '#78eda1'),
-    opacity=0.4
-)
-
-
-updatemenus = list([
-    dict(
-         buttons=list([
-             dict(
-        label = best_5[0],
-             method = 'update',
-             args = [{'visible': [True, False, False, False, False, False, False, False, False, False]},
-                     
-                    ]),
-             dict(
-        label = best_5[1],
-             method = 'update',
-             args = [{'visible': [False, True, False, False, False, False, False, False, False, False]},
-                
-                    ]),
-             dict(
-        label = best_5[2],
-             method = 'update',
-             args = [{'visible': [False, False, True, False, False, False, False, False, False, False]},
-                
-                    ]),
-             dict(
-        label = best_5[3],
-             method = 'update',
-             args = [{'visible': [False, False, False,True, False, False, False, False, False, False]},
-                 
-                    ]),
-             dict(
-        label = best_5[4],
-             method = 'update',
-             args = [{'visible': [False, False, False, False, True, False, False, False, False, False]},
-                  
-                    ])
-           ]),   
-        x = 0.55,
-        y = 1.12  
-    ),
-    dict(
-        buttons = list([
-            dict(label = worst_5[0],
-                 method = 'update',
-                 args = [{'visible': [False, False, False, False, False, True, False, False, False, False]},
-                        
-                        ]),
-            dict(label = worst_5[1],
-                 method = 'update',
-                 args = [{'visible': [False, False, False, False, False, False, True, False, False, False]},
-                         
-                        ]),
-            dict(label = worst_5[2],
-                 method = 'update',
-                 args = [{'visible': [False, False, False, False, False, False, False, True, False, False]},
-                         
-                        ]),
-            dict(label = worst_5[3],
-                 method = 'update',
-                 args = [{'visible': [False, False, False, False, False, False, False, False, True, False]},
-                         
-                        ]),
-            dict(label = worst_5[4],
-                 method = 'update',
-                 args = [{'visible': [False, False, False, False, False, False, False, False, False, True]},
-                         
-                        ])
-        ]),
-        x = 0.3,
-        y = 1.12
-    )
-])
-    
-
-
-data3 = [best1, best2, best3, best4, best5, worst1, worst2, worst3, worst4, worst5]
-layout = go.Layout(title = 'Distribution of Playlist Followers for Genres With Few/Many Mean Followers',
-                   barmode='overlay', 
-                   showlegend=True,
-                  updatemenus = updatemenus,
-                  xaxis = dict(
-                      title = 'Playlist Followers (log)',
-                      range = [0,16]),
-                  yaxis = dict(
-                  title = 'Counts',
-                  range = [0,100]))
-                  
-fig = go.Figure(data=data3, layout=layout)
-
-py.iplot(fig, filename='eda4')
-```
-
-
 
 
 
@@ -381,37 +155,6 @@ py.iplot(fig, filename='eda4')
 Interaction terms could potentially provide useful insight between genres and audio features. These could help answer questions such as: would the number of followers differ for different levels of 'danceability' for dance music vs. rap music? Because the number of genres exceed 100, the genres are first binned into broad genres such as 'house','hip hop','pop','dance','r&b','rap','acoustic','soul'. Then interaction terms are created with these broader genres. 
 
 The following scatterplots and histograms show how audio features differ between two different genres: rap music and dance music. We observe see that their distributions differ (slightly). For example, rap music seems to be slightly higher in mean energy, and pop music seems to have a slightly higher valence. 
-
-
-
-
-
-
-
-
-
-    Train Size: (1257, 951)
-    Test Size: (139, 950)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -484,17 +227,6 @@ Then, we average the number of followers for all playlists that include a top 30
 
 
 
-
-
-
-
-
-
-
-
-![png](eda_files/eda_55_0.png)
-
-
 ## Title Features
 
 The last categories that were explored were the titles of the playlists. Spotify users commonly search for certain words in playlist titles, such as "Best of 2017" or "Top Pop Music." Titles were parsed to find certain substrings which were common in titles, and then categorized. For example, the titles containing "top" and "best" belong to the same category (Best). Titles containing "motivation", "exercise", or "workout" were all categorized as workout song titles. The following chart shows the mean followers for these different title categories. It is clear that the "Best" category has a high number of mean followers whereas the older songs of the 20th century have a low number of mean followers. 
@@ -534,15 +266,6 @@ The last categories that were explored were the titles of the playlists. Spotify
 
 
 The following wordcloud visuals describe the same categories of strings. The image on the left represents the number of playlists in the category (frequency) and the image on the right represents the number of mean followers for playlists of the category (popularity). We observe that many playlists are from the 2000s or are for working out. Taking frequencies into account, the "party" and "best" playlists have high popularity. 
-
-
-
-```python
-title_counts[:10]
-```
-
-
-
 
 
 <div>
@@ -657,10 +380,4 @@ title_counts[:10]
 
 ![png](eda_files/eda_64_0.png)
 
-
-
-
-```python
-
-```
 

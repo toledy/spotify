@@ -1,7 +1,6 @@
 ---
-title: Model Inference
+title: Best Model Inference
 notebook: inference.ipynb
-nav_include: 5
 ---
 
 ## Contents
@@ -82,11 +81,10 @@ The predictors are evaluated in importance for each broad category (artist/genre
     GradientBoostingRegressor(alpha=0.99, criterion='friedman_mse', init=None,
                  learning_rate=0.03, loss='huber', max_depth=5,
                  max_features='auto', max_leaf_nodes=None,
-                 min_impurity_decrease=0.0, min_impurity_split=None,
-                 min_samples_leaf=1, min_samples_split=2,
-                 min_weight_fraction_leaf=0.0, n_estimators=200,
-                 presort='auto', random_state=None, subsample=1.0, verbose=0,
-                 warm_start=False)
+                 min_impurity_split=1e-07, min_samples_leaf=1,
+                 min_samples_split=2, min_weight_fraction_leaf=0.0,
+                 n_estimators=200, presort='auto', random_state=None,
+                 subsample=1.0, verbose=0, warm_start=False)
 
 
 
@@ -126,130 +124,59 @@ In general, the most important category of features was found to be the audio fe
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
-      <th></th>
       <th>Feature</th>
-      <th>Importance Percentage</th>
+      <th>valence_mean</th>
+      <th>dance_mean</th>
+      <th>valence_std</th>
+      <th>speech_std</th>
+      <th>liveness_mean</th>
+      <th>loudness_std</th>
+      <th>speech_mean</th>
+      <th>mode_mean</th>
+      <th>acousticness_std</th>
+      <th>followers_std</th>
+      <th>tempo_std</th>
+      <th>instrumentalness_std</th>
+      <th>key_mean</th>
+      <th>time_mean</th>
+      <th>liveness_std</th>
+      <th>loudness_mean</th>
+      <th>dance_std</th>
+      <th>tempo_mean</th>
+      <th>energy_mean</th>
+      <th>key_std</th>
+      <th>acousticness_mean</th>
+      <th>followers_mean</th>
+      <th>energy_std</th>
+      <th>instrumentalness_mean</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th>0</th>
-      <td>valence_mean</td>
-      <td>100.000000</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>dance_mean</td>
+      <th>Importance Percentage</th>
+      <td>100.0</td>
       <td>92.459074</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>valence_std</td>
       <td>77.060993</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>speech_std</td>
       <td>56.463127</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>liveness_mean</td>
       <td>53.478693</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>loudness_std</td>
       <td>47.417054</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>speech_mean</td>
       <td>43.054002</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>mode_mean</td>
       <td>40.359594</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>acousticness_std</td>
-      <td>38.343990</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>followers_std</td>
-      <td>38.327400</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>tempo_std</td>
+      <td>38.34399</td>
+      <td>38.3274</td>
       <td>37.664597</td>
-    </tr>
-    <tr>
-      <th>11</th>
-      <td>instrumentalness_std</td>
       <td>35.477903</td>
-    </tr>
-    <tr>
-      <th>12</th>
-      <td>key_mean</td>
       <td>30.910104</td>
-    </tr>
-    <tr>
-      <th>13</th>
-      <td>time_mean</td>
       <td>30.734492</td>
-    </tr>
-    <tr>
-      <th>14</th>
-      <td>liveness_std</td>
       <td>28.425508</td>
-    </tr>
-    <tr>
-      <th>15</th>
-      <td>loudness_mean</td>
-      <td>28.276190</td>
-    </tr>
-    <tr>
-      <th>16</th>
-      <td>dance_std</td>
+      <td>28.27619</td>
       <td>27.195735</td>
-    </tr>
-    <tr>
-      <th>17</th>
-      <td>tempo_mean</td>
       <td>26.276604</td>
-    </tr>
-    <tr>
-      <th>18</th>
-      <td>energy_mean</td>
       <td>23.364516</td>
-    </tr>
-    <tr>
-      <th>19</th>
-      <td>key_std</td>
       <td>21.360647</td>
-    </tr>
-    <tr>
-      <th>20</th>
-      <td>acousticness_mean</td>
       <td>20.730889</td>
-    </tr>
-    <tr>
-      <th>21</th>
-      <td>followers_mean</td>
       <td>20.210386</td>
-    </tr>
-    <tr>
-      <th>22</th>
-      <td>energy_std</td>
       <td>19.774391</td>
-    </tr>
-    <tr>
-      <th>23</th>
-      <td>instrumentalness_mean</td>
       <td>11.737473</td>
     </tr>
   </tbody>

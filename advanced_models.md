@@ -38,16 +38,6 @@ nav_include: 4
 
 
 
-
-
-
-
-
-
-
-
-
-
 ## Data Pre-Processing
 
 After reading in the dataframe, we will pre-process the data in four steps: 
@@ -55,72 +45,6 @@ After reading in the dataframe, we will pre-process the data in four steps:
 - Locate the missing columns in the dataframe and proceed with **median-based imputation**
 - After imputation, we **standardize** the numerical columns with training mean and standard deviation 
 - Lastly, we **log-transform** the response variable 'No. of Followers' to make it more aligned to the Normality assumption
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -159,40 +83,6 @@ $$MEAE(y, \hat{y}) = \text{median}(|y_1-\hat{y}_1|, \cdots, |y_n-\hat{y}_n|)$$
 
 The key metrics given the parameters of our pre-processing are 1) $R^2$ and 5) $MSLE$, which will be the most important basis of comparison for the 9 advanced models.
 
-
-
-```python
-def expected_score1(model, x, y):
-    R2 = 0
-    EVar = 0
-    MAE = 0
-    MSE = 0
-    MSLE = 0
-    MEAE = 0
-
-    R2 += model.score(x, y)
-    EVar += explained_variance_score(y, model.predict(x))
-    MAE += mean_absolute_error(y, model.predict(x))
-    MSE += mean_squared_error(y, model.predict(x))
-    MSLE += mean_squared_log_error(y, model.predict(x))
-    MEAE += median_absolute_error(y, model.predict(x))
-
-    return pd.Series([R2 / 100., 
-                      EVar / 100., 
-                      MAE / 100., 
-                      MSE / 100.,
-                      MSLE / 100.,
-                      MEAE / 100.],
-                      index = ['R2', 'EVar', 'MAE', 'MSE', 'MSLE', 'MEAE'])
-
-score = lambda model, x, y: pd.Series([model.score(x, y), 
-                                       explained_variance_score(y, model.predict(x)),
-                                       mean_absolute_error(y, model.predict(x)),
-                                       mean_squared_error(y, model.predict(x)),
-                                       mean_squared_log_error(y, model.predict(x)),
-                                       median_absolute_error(y, model.predict(x))], 
-                                      index=['R2', 'EVar', 'MAE', 'MSE', 'MSLE', 'MEAE'])
-```
 
 
 ## Model Fitting
@@ -524,12 +414,7 @@ In comparison to Boosting in which weak learners (high bias, low variance) are u
 - We could also easily eliminate **Huber Regressor**, **Neural Network** because of their terrible performance on the training data and they might not be a good fit for the Spotify data
 
 
-
-
-
-    Training Scores:
-
-
+**Training Scores:**
 
 
 
@@ -641,13 +526,7 @@ In comparison to Boosting in which weak learners (high bias, low variance) are u
 
 
 
-
-
-
-
-    Training Scores Ranking:
-
-
+**Training Scores Ranking:**
 
 
 
@@ -786,9 +665,7 @@ In comparison to Boosting in which weak learners (high bias, low variance) are u
 
 
 
-    Test Scores:
-
-
+**Test Scores:**
 
 
 
@@ -900,13 +777,7 @@ In comparison to Boosting in which weak learners (high bias, low variance) are u
 
 
 
-
-
-
-
-    Test Scores Ranking:
-
-
+**Test Score Rankings:**
 
 
 
@@ -1046,17 +917,6 @@ grid = {'max_depth': [5, 10],
 ```
 
 
-
-
-```python
-clf = GridSearchCV(estimator=GradientBoostingRegressor(), param_grid=grid, n_jobs=-1, cv=5)
-clf.fit(x_train, y_train)
-```
-
-
-
-
-
     GridSearchCV(cv=5, error_score='raise',
            estimator=GradientBoostingRegressor(alpha=0.9, criterion='friedman_mse', init=None,
                  learning_rate=0.1, loss='ls', max_depth=3, max_features=None,
@@ -1071,15 +931,7 @@ clf.fit(x_train, y_train)
 
 
 
-Cross-Validated Model
-
-
-
-```python
-clf_test = score(clf, x_test, y_test)
-clf_test
-```
-
+**Cross-Validated Model - Fit on Training Set, Scored on Test Set**
 
 
 
@@ -1091,11 +943,6 @@ clf_test
     MSLE    0.076121
     MEAE    1.605702
     dtype: float64
-
-
-
-
-
 
 
     Best Estimator Parameters

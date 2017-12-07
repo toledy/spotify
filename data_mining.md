@@ -9,10 +9,6 @@ nav_include: 1
 *  
 {: toc}
 
-### Using The Spotify Developer API
-
-
-
 
 
 ## Data Mining

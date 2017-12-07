@@ -1,5 +1,5 @@
 ---
-title: Best Model Inference
+title: Model Inference
 notebook: inference.ipynb
 nav_include: 5
 ---
@@ -10,7 +10,7 @@ nav_include: 5
 {: toc}
 
 
-## Section 1. Predictor Importance
+## Predictor Importance
 
 We choose Gradient Boosting Regression as the best model to predict playlist popularity. This model has high interpretablilty, enabling us to analyze the most important features and qualities of popular playlists. To evaluate the importance of predictors for the gradient boosting tree, we use scores determined by the usefulness of the certain predictor during the construction of trees. 
 
@@ -50,10 +50,6 @@ The predictors are evaluated in importance for each broad category (artist/genre
 
 
 
-
-
-    Train Size: (1278, 949)
-    Test Size: (142, 949)
 
 
 
@@ -102,9 +98,9 @@ The predictors are evaluated in importance for each broad category (artist/genre
 
 
 
-### Section 1.1 Important Audio Features 
+### Important Audio Features 
 
-In general, the most important category of features was found to be the audio features. In fact, 23 out of the most important 50 were audio features. 
+In general, the most important category of features was found to be the audio features. In fact, 24 out of the most important 50 were audio features. 
 
 
 
@@ -268,7 +264,7 @@ The second most important predictor is the mean of danceability. Songs that are 
 
 Another important predictor iss the speech standard deviation and mean. We also observe in the multiregression inference that there is a negative correlation between speech and playlist popularity. This indicates that followers consistently prefer songs with less speech. 
 
-### Section 1.2 Important Genre Features
+### Important Genre Features
 
 
 
@@ -413,7 +409,7 @@ We can see from the table that siginifcant genres include compositional ambient,
 
 These may not be the most common genres, in fact the number of tracks in each of these genres are all below 600. However, we do see that for all of these genres, the mean number of followers is significantly higher. Escape room music is most likely played in escape rooms--and there is growing popularity for escape rooms. We notice that these genres, although not frequently featured in playlists, may have very loyal and consistent listeners.  
 
-### Section 1.3 Important Title Features
+### Important Title Features
 
 
 
@@ -426,13 +422,13 @@ These may not be the most common genres, in fact the number of tracks in each of
 
 
 
-<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~tingnoble/1.embed" height="525px" width="100%"></iframe>
+<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~tingnoble/31.embed" height="525px" width="100%"></iframe>
 
 
 
 The most important titles include years in the 2000s. Titles with 1990s are also significant, although lesser in degree. It is reasonable that people search for recent songs more often. 
 
-### Section 1.4 Important Interaction Features
+### Important Interaction Features
 
 
 
@@ -441,7 +437,7 @@ The most important titles include years in the 2000s. Titles with 1990s are also
 
 
 
-<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~tingnoble/1.embed" height="525px" width="100%"></iframe>
+<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~tingnoble/33.embed" height="525px" width="100%"></iframe>
 
 
 
@@ -451,7 +447,7 @@ We observe that acousticness is an important feature for several different genre
 
 Lastly, how much energy and key may differ for songs in rap playlists is also quite significant. 
 
-### Section 1.5 Important Artists 
+### Important Artists 
 
 
 
@@ -564,7 +560,7 @@ We observe that the most significant artists were Yo Gotti, Led Zeppelin, and Po
 
 Unsurprisingly, the popularity of the artist has a great significance on the popularity of the playlist. What is surprising is that the standard deviation of artist popularity songs has a greater significance than the mean of the popularity. This indicates that a playlist having consistent artist popularity will gain more followers. 
 
-## Section 2. Inference for Residuals
+## Inference for Residuals
 
 
 
@@ -572,19 +568,6 @@ Unsurprisingly, the popularity of the artist has a great significance on the pop
 
 
 
-```python
-def residual_plot():
-
-    f,ax = plt.subplots(1,1,figsize=(10,8))
-
-    ax = sns.regplot(x=y_hat, y=resid, scatter_kws={'alpha':0.5, 's':50})
-    ax.plot([0,14],[0,0], '-.', c = green_col, linewidth = 1.5)
-    ax.set_xlabel('Fitted Values (Log Scale)')
-    ax.set_ylabel('Residual Values')
-    ax.set_title('Residual vs. Fitted Values Plot')
-    ax.set_xticklabels((4, 6, 8, 10, 12, 14), fontsize=12)
-    ax.set_yticklabels((-8, -6, -4, -2, 0, 2, 4, 6, 8), fontsize=12)
-```
 
 
 

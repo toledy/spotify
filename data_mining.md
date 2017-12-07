@@ -39,36 +39,7 @@ The main idea of this project is twofold: (i) to infer about key predictors (whe
 
 To this extent, the first step in doing any further analysis is to obtain the playlists we want to run our predictions on. We decide to focus on Spotify's own "featured" playlists - i.e., those produced by Spotify itself given specific genres / moods / artists etc.. 
 
-The initial step is to pull Spotify's featured playlists and obtain a number of base playlist features.
-
-
-
-```python
-playlists = sp.user_playlists('spotify')
-
-spotify_playlists = []
-
-while playlists:
-    
-    for i, playlist in enumerate(playlists['items']):
-        names = playlist['name']
-        track_count = playlist['tracks']['total']
-        ids = playlist['id']
-        uri = playlist['uri']
-        href = playlist['href']
-        public = playlist['public']
-        data_aggregation = names, track_count, ids, uri, href, public
-        spotify_playlists.append(data_aggregation)
-        
-    if playlists['next']:
-        playlists = sp.next(playlists)
-    
-    else:
-        playlists = None
-```
-
-
-The obtained baseline playlist features are converted into a large dataframe next.
+The initial step is to pull Spotify's featured playlists and obtain a number of base playlist features. The obtained baseline playlist features are converted into a large dataframe next.
 
 
 

@@ -9,7 +9,9 @@ nav_include: 1
 *  
 {: toc}
 
+## Source Code
 
+Please refer to [Data Mining & Wrangling](https://github.com/toledy/spotify/blob/master/notebooks/data_mining.ipynb) for the source code (Jupyter Notebook).
 
 ## Data Mining
 

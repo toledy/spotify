@@ -297,7 +297,7 @@ We achieve a $R^2$ test score of 0.2246. However, since predictors are being ran
 
 Principle Component Analysis (PCA) is another way to reduce the number of predictors. Each component is a linear combination of all 949 orginal predictors. The components are ordered in such a way so that the amount of captured observed variance descreases. Linear regression is performed on the principal components of the PCA transformation. We attempt different numbers of PCA components from 1 to 100 and choose the optimal number of PCA components according to test $R^2$ score. 
 
-We acheive the best $R^2$ test score of 0.1307 with 30 PCA components. Although we gain a higher test $R^2$ score and also have less predictors, we lose interpretability. We cannot pinpoint how a change in one predictor will change the response varibable because each component is a linear combination of all original columns.
+We achieve the best $R^2$ test score of 0.1307 with 30 PCA components. Although we gain a higher test $R^2$ score and also have less predictors, we lose interpretability. We cannot pinpoint how a change in one predictor will change the response varibable because each component is a linear combination of all original columns.
 
 
 

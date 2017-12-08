@@ -50,7 +50,11 @@ Please refer to [Playlist Generation & Conclusion](https://toledy.github.io/spot
 
 ## Literature / Related Work / Sources
 
-[1] Hastie, T., Hastie, T., Tibshirani, R., & Friedman, J. H. (2001). The elements of statistical learning: Data mining, inference, and prediction. New York: Springer.
+Caruana, R. & Niculescu-Mizil, A (2005). An Empirical Comparison of Supervised Learning Algorithms Using Different Performance Metrics.
+
+James, G., Witten, D., Hastie, T., & Tibshirani, R. (2015) An Introduction to Statistical Learning with Application in R. Springer.
+
+Hastie, T., Tibshirani, R., & Friedman, J. H. (2001). The elements of statistical learning: Data mining, inference, and prediction. New York: Springer.
 
 We would be remiss not to mention both the Spotify API:
 

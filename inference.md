@@ -196,25 +196,9 @@ Interestingly, the mean valence is shown to be the most important predictor. The
 
 The second most important predictor is the mean of danceability. Songs that are more danceable have greater tempo and  rhythm stability, beat strength, and overall regularity.
 
-Another important predictor iss the speech standard deviation and mean. We also observe in the multiregression inference that there is a negative correlation between speech and playlist popularity. This indicates that followers consistently prefer songs with less speech. 
+Another important predictor is the speech standard deviation and mean. We also observe in the multi-regression inference that there is a negative correlation between speech and playlist popularity. This indicates that followers consistently prefer songs with less speech. 
 
 ### Important Genre Features
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -339,9 +323,9 @@ Another important predictor iss the speech standard deviation and mean. We also 
 
 
 
-We can see from the table that siginifcant genres include compositional ambient, dance-punk, welsh rock, hardcore hip hop, hip house, adult standards, escape room, and slow core. 
+We can see from the table that significant genres include compositional ambient, dance-punk, welsh rock, hardcore hip hop, hip house, adult standards, escape room, and slow core. 
 
-These may not be the most common genres, in fact the number of tracks in each of these genres are all below 600. However, we do see that for all of these genres, the mean number of followers is significantly higher. Escape room music is most likely played in escape rooms--and there is growing popularity for escape rooms. We notice that these genres, although not frequently featured in playlists, may have very loyal and consistent listeners.  
+These may not be the most common genres, in fact the number of tracks in each of these genres are all below 600. However, we do see that for all of these genres, the mean number of followers is significantly higher. The recently booming popularity of escape rooms is a possible cause of the popularity of escape room music. We notice that these genres, although not frequently featured in playlists, may have very loyal and consistent listeners.  
 
 ### Important Title Features
 
@@ -528,4 +512,4 @@ The residuals plot above shows the difference between the predicted fitted value
 
 References:
 
-[1] Hastie, T., Hastie, T., Tibshirani, R., & Friedman, J. H. (2001). The elements of statistical learning: Data mining, inference, and prediction. New York: Springer.
+[1] Hastie, T., Tibshirani, R., & Friedman, J. H. (2001). The elements of statistical learning: Data mining, inference, and prediction. New York: Springer.
